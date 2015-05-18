@@ -1,10 +1,13 @@
 var React = require('react');
 var transformToPages = require('./utilities/transformToPages');
 var deepClone = require('./utilities/deepClone');
-
+var createChainedFunction = require('./utilities/createChainedFunction');
 
 var BindToMixin = require('react-binding');
 var _ = require('underscore');
+
+var pdfKitService = require('./services/pdfKitService');
+var pdfHummusService = require('./services/pdfHummusService');
 
 var HtmlPage = React.createClass({
 	render: function () {
@@ -17,10 +20,11 @@ var HtmlPage = React.createClass({
 		);
 	}
 });
+
 var HtmlPagesRenderer = React.createClass({
 	mixins: [BindToMixin],
 	getInitialState: function () {
-		return {tempData: this.props.data !== undefined ? deepClone(this.props.data) : {}}
+		return {data: this.props.data || {}}
 	},
 	createComponent: function (box) {
 		var widget = this.props.widgets[box.elementName];
@@ -30,9 +34,9 @@ var HtmlPagesRenderer = React.createClass({
 		return React.createElement(widget, props, box.content !== undefined ? React.DOM.span(null, box.content) : undefined);
 	},
 	render: function () {
-		var pages = transformToPages(this.props.schema, this.state.tempData);
+		var pages = transformToPages(this.props.schema, this.state.data);
 
-		var data = this.bindToState('tempData');
+		var data = this.bindToState('data');
 
 		//apply two-way binding
 		_.each(pages, function (page) {
@@ -68,4 +72,26 @@ var HtmlPagesRenderer = React.createClass({
 	}
 });
 
-module.exports = HtmlPagesRenderer;
+var PDFPagesTrigger = React.createClass({
+	getPDFService(type){
+		if (type === "pdfHummus") return new pdfHummusService();
+		return new pdfKitService();
+	},
+	openNewWindow() {
+		var pages = transformToPages(this.props.schema,this.props.data);
+		
+		this.getPDFService(this.props.type).generatePDFDocument(pages, function (url) {
+			window.open(url);
+		});
+	},
+	render: function() {
+		var child = React.Children.only(this.props.children);
+		return React.cloneElement(child,{onClick: createChainedFunction(child.props.onClick, this.openNewWindow)});
+	}
+});
+
+module.exports = {
+	HtmlPagesRenderer:HtmlPagesRenderer,
+	PDFPagesTrigger:PDFPagesTrigger
+	
+};
