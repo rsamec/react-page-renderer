@@ -38,14 +38,35 @@ var HtmlPagesRenderer = React.createClass({
 		_.each(pages, function (page) {
 			_.each(page.boxes, function (node) {
 				var box = node.element;
-				if (!!box.Binding) {
-					if (box.elementName === "ReactBootstrap.Input" || box.elementName === "TextBoxInput" || box.elementName === "CheckBoxInput") {
-						box.valueLink = this.bindTo(this.props.dataContext, box.Binding);
+				
+				//apply binding
+				for (var propName in box){
+					var prop = box[propName];
+					//TODO: better test - it is a binding object?
+					if (_.isObject(prop) && !!prop.Path){
+						if (propName === "value" || propName === "checked") {
+							//two-way binding
+							box.valueLink = this.bindTo(this.props.dataContext, prop.Path);
+							box.value = undefined;
+                            //
+							////error - one way binding
+							//var error = ref(this.props.errors,prop.Path);
+							//if (error !== undefined) {
+							//	box.help = error.ErrorMessage;
+							//	box.bsStyle = error.HasErrors ? 'error' : '';
+							//}
+						}
+						
 					}
 				}
+				//if (!!box.Binding) {
+				//	if (box.elementName === "ReactBootstrap.Input" || box.elementName === "TextBoxInput" || box.elementName === "CheckBoxInput") {
+				//		box.valueLink = this.bindTo(this.props.dataContext, box.Binding);
+				//	}
+				//}
 			}, this)
 
-		}, this)
+		}, this);
 		return (
 			<div id="section-to-print">
 		{pages.map(function (page, i) {

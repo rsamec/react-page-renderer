@@ -58,26 +58,29 @@ var BootstrapRenderer = React.createClass({
 			return str.split(".").reduce(function(o, x) { return o === undefined?undefined:o[x] }, obj);
 		}
 		//apply binding
-		if (!!box.Binding){
-			if (box.elementName === "ReactBootstrap.Input" || box.elementName === "TextBoxInput") {
-				box.valueLink = this.bindTo(dataContext, box.Binding);
-				var error = ref(this.props.errors,box.Binding);
-				if (error !== undefined) {
-					box.help = error.ErrorMessage;
-					box.bsStyle = error.HasErrors ? 'error' : '';
+		for (var propName in box){
+			var prop = box[propName];
+			//TODO: better test - it is a binding object?
+			if (_.isObject(prop) && !!prop.Path){
+				if (propName === "value" || propName === "checked") {
+					//two-way binding
+					box.valueLink = this.bindTo(dataContext, prop.Path);
+					box.value = undefined;
+					
+					//error - one way binding
+					var error = ref(this.props.errors,prop.Path);
+					if (error !== undefined) {
+						box.help = error.ErrorMessage;
+						box.bsStyle = error.HasErrors ? 'error' : '';
+					}
+				}
+				else{
+					//one-way binding
+					box[propName] = this.bindTo(dataContext, prop.Path).value;
 				}
 			}
-			else if (box.elementName === "ValueBox") {
-				box.valueLink = this.bindTo(dataContext, box.Binding);
-				box.content = box.valueLink.value;
-			}
-			else if (box.elementName === "React.Griddle"){
-				box.results = this.bindArrayTo(dataContext, box.Binding).items.map(function(item){return item.value});
-			}
-			else{
-
-			}
 		}
+		
 	},
 	createComponent: function (box) {
 
