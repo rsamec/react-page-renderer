@@ -40,7 +40,7 @@ var HtmlPagesRenderer = React.createClass({
 				var box = node.element;
 				if (!!box.Binding) {
 					if (box.elementName === "ReactBootstrap.Input" || box.elementName === "TextBoxInput" || box.elementName === "CheckBoxInput") {
-						box.valueLink = this.bindTo(his.props.dataContext, box.Binding);
+						box.valueLink = this.bindTo(this.props.dataContext, box.Binding);
 					}
 				}
 			}, this)

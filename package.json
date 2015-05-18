@@ -1,6 +1,6 @@
 {
   "name": "react-page-renderer",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "private": false,
   "description": "My React Component",
   "main": "lib/react-page-renderer.js",
