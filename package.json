@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": false,
   "description": "My React Component",
-  "main": "src/Component.js",
+  "main": "src/react-page-renderer.js",
   "author": "Roman Samec",
   "license": "MIT",
   "homepage": "https://github.com/rsamec/react-page-renderer",
@@ -17,13 +17,12 @@
   "dependencies": {
     "react": "^0.13.2",
     "react-binding": "^0.6.0",
-    "react-designer-widgets": "^0.1.1",
     "reactify": "^0.17.1",
     "traverse": "^0.6.6",
     "underscore": "^1.8.3"
   },
   "devDependencies": {
-    "react-designer-widgets": "0.0.8",
+    "react-designer-widgets": "^0.1.1",
     "gulp": "^3.8.10",
     "react-component-gulp-tasks": "^0.7.0"
   },
