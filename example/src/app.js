@@ -1,33 +1,263 @@
 var React = require('react');
-
+var BindToMixin = require('react-binding');
 var HtmlPagesRenderer = require('react-page-renderer').HtmlPagesRenderer;
 var PDFPagesTrigger = require('react-page-renderer').PDFPagesTrigger;
+var BootstrapPublisher = require('react-page-renderer').BootstrapPublisher;
 
 var WidgetFactory = require('react-designer-widgets');
 var widgets = new WidgetFactory().getWidgets();
 
+var _ = require('underscore');
+
+//external widgets with more controls
+var ReactBootstrap = require('react-bootstrap');
+var bootstrapWidgets = {};
+	_.each(['Input','Button', 'Panel','Glyphicon','Tooltip','Alert','Label'],function(widgetName){
+		var name = 'ReactBootstrap.' + widgetName;
+		bootstrapWidgets[name] = ReactBootstrap[widgetName];
+	});
+
+var Modal = ReactBootstrap.Modal;
+var ModalTrigger = ReactBootstrap.ModalTrigger;
+var Button = ReactBootstrap.Button;
+
+var request = require('superagent');
+
+var businessRules = {
+	"Employee": {
+		"type": "object",
+		"properties": {
+			"FirstName": {
+				"type": "string",
+				"title": "First name",
+				"required": "true",
+				"maxLength": "15"
+			},
+			"LastName": {
+				"type": "string",
+				"title": "Last name",
+				"required": "true",
+				"maxLength": "15"
+			}
+		}
+	}
+}
+const MyModal = React.createClass({
+	
+	render() {
+		var style = {height:'70vh'};
+		return (
+			<Modal {...this.props} title='Modal heading' animation={false}>
+				<div style={style} className='modal-body'>
+					<BootstrapPublisher widgets={bootstrapWidgets} schema={this.props.schema} rules={businessRules} dataContext={this.props.dataContext} />
+				</div>
+				<div className='modal-footer'>
+					<Button onClick={this.props.onRequestHide}>Close</Button>
+				</div>
+			</Modal>
+		);
+	}
+});
+
 var App = React.createClass({
+	mixins:[BindToMixin],
 	getInitialState(){
-		return {data:this.props.schema.data || {}}	
+		return {inputSchema:{
+			"containers": [
+				{
+					"name": "sec80989847",
+					"elementName": "Container",
+					"style": {
+						"top": 0,
+						"left": 0,
+						"height": 116,
+						"width": 798,
+						"position": "relative"
+					},
+					"boxes": [
+						{
+							"name": "ctBootstrap.Input63433383",
+							"elementName": "ReactBootstrap.Input",
+							"style": {
+								"top": 6,
+								"left": 7
+							},
+							"placeholder": "type your first name",
+							"type": "text",
+							"label": "First Name",
+							"Binding": "From.Name"
+						},
+						{
+							"name": "ctBootstrap.Input22938084",
+							"elementName": "ReactBootstrap.Input",
+							"style": {
+								"top": 6,
+								"left": 210
+							},
+							"type": "text",
+							"placeholder": "type your surname",
+							"label": "Last Name",
+							"Binding": "Employee.LastName"
+						},
+						{
+							"name": "ctBootstrap.Glyphicon47712437",
+							"elementName": "ReactBootstrap.Glyphicon",
+							"style": {
+								"top": 26,
+								"left": 544
+							},
+							"glyph": "eur"
+						},
+						{
+							"name": "ctBootstrap.Button34757314",
+							"elementName": "ReactBootstrap.Button",
+							"style": {
+								"top": 23,
+								"left": 428
+							},
+							"bsStyle": "danger",
+							"bsSize": "smaller",
+							"content": "Add"
+						}
+					],
+					"containers": []
+				},
+				{
+					"name": "sec44472784",
+					"elementName": "Container",
+					"style": {
+						"top": 0,
+						"left": 0,
+						"height": 200,
+						"width": 800,
+						"position": "relative"
+					},
+					"boxes": [
+						{
+							"name": "yMceEditor08800700",
+							"elementName": "TinyMceEditor",
+							"style": {
+								"top": 6,
+								"left": 3
+							},
+							"content": "<p><span style=\"color: rgb(51, 51, 51); font-family: Ubuntu, Tahoma, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px;\">R Markdown is an authoring format that enables easy creation of dynamic documents, presentations, and reports from R. It combines the core syntax of&nbsp;</span><a href=\"http://daringfireball.net/projects/markdown/basics\" style=\"box-sizing: border-box; color: rgb(221, 72, 20); text-decoration: none; font-family: Ubuntu, Tahoma, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px;\">markdown</a><span style=\"color: rgb(51, 51, 51); font-family: Ubuntu, Tahoma, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px;\">&nbsp;(an easy-to-write plain text format) with embedded R code chunks that are run so their output can be included in the final document. R Markdown documents are fully&nbsp;</span><em style=\"box-sizing: border-box; color: rgb(51, 51, 51); font-family: Ubuntu, Tahoma, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px;\">reproducible</em><span style=\"color: rgb(51, 51, 51); font-family: Ubuntu, Tahoma, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px;\">&nbsp;(they can be automatically regenerated whenever underlying R code or data changes).</span><br></p>"
+						}
+					],
+					"containers": []
+				},
+				{
+					"name": "sec33022331",
+					"elementName": "Container",
+					"style": {
+						"top": 0,
+						"left": 0,
+						"height": 200,
+						"width": 800,
+						"position": "relative"
+					},
+					"boxes": [
+						{
+							"name": "ct.Griddle53464075",
+							"elementName": "React.Griddle",
+							"style": {
+								"top": 0,
+								"left": 0
+							},
+							"results": [
+								{
+									"FirstName": "Karel",
+									"LastName": "Novak",
+									"Email": "r2@gmail.cz",
+									"Address": "Moskva"
+								}
+							],
+							"showFilter": true,
+							"showSettings": true
+						}
+					],
+					"containers": []
+				},
+				{
+					"name": "sec96561242",
+					"elementName": "Container",
+					"style": {
+						"top": 0,
+						"left": 0,
+						"height": 278,
+						"width": 813,
+						"position": "relative"
+					},
+					"boxes": [
+						{
+							"name": "ctD3.LineChart24513352",
+							"elementName": "ReactD3.LineChart",
+							"style": {
+								"top": 0,
+								"left": 1
+							},
+							"width": "300",
+							"title": "Lines",
+							"data": {
+								"values": [
+									{
+										"x": "1",
+										"y": "200"
+									},
+									{
+										"x": "2",
+										"y": "100"
+									},
+									{
+										"x": "3",
+										"y": "150"
+									}
+								]
+							},
+							"height": "200"
+						}
+					],
+					"containers": []
+				}
+			]
+		}}	
 	},
-	getDefaultProps(){
-		var texts =	{"elementName":"ObjectSchema","name":"rootContainer","containers":[{"name":"container","elementName":"Container","style":{"top":0,"left":0,"height":103,"width":745,"position":"relative"},"boxes":[{"name":"HtmlBox","elementName":"HtmlBox","style":{"top":46,"left":2},"content":"<p>Each inline text can be <em>styled</em> <strong>independently</strong> <span style=\"text-decoration: underline;\">then</span>.</p>"},{"name":"TextBox","elementName":"TextBox","style":{"top":0,"left":0},"content":"This is a header","font":{"bold":true,"size":18}}],"containers":[]},{"name":"paragraph","elementName":"Container","style":{"top":0,"left":0,"height":776,"width":752,"position":"relative"},"boxes":[],"containers":[{"name":"header","elementName":"Container","style":{"top":0,"left":0,"height":51,"width":747,"position":"relative"},"boxes":[{"name":"TextBox","elementName":"TextBox","style":{"top":0,"left":0},"content":"Simple paragraphs","font":{"bold":true,"size":16}}],"containers":[]},{"name":"left","elementName":"Container","style":{"top":0,"left":0,"height":180,"width":743,"position":"relative"},"boxes":[{"name":"HtmlBox","elementName":"HtmlBox","style":{"top":38,"left":0},"content":"<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit, officiis viveremus aeternum superstitio suspicor alia nostram, quando nostros congressus susceperant concederetur leguntur iam, vigiliae democritea tantopere causae, atilii plerumque ipsas potitur pertineant multis rem quaeri pro, legendum didicisse credere ex maluisset per videtis. Cur discordans praetereat aliae ruinae dirigentur orestem eodem, praetermittenda divinum. Collegisti, deteriora malint loquuntur officii cotidie finitas referri doleamus ambigua acute. Adhaesiones ratione beate arbitraretur detractis perdiscere, constituant hostis polyaeno. Diu concederetur.</p>"},{"name":"TextBox","elementName":"TextBox","style":{"top":0,"left":0},"content":"Left aligned","font":{"bold":true}}],"containers":[]},{"name":"centre","elementName":"Container","style":{"top":0,"left":0,"height":180,"width":743,"position":"relative"},"boxes":[{"name":"HtmlBox","elementName":"HtmlBox","style":{"top":40,"left":0},"content":"<p style=\"text-align: center;\">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit, officiis viveremus aeternum superstitio suspicor alia nostram, quando nostros congressus susceperant concederetur leguntur iam, vigiliae democritea tantopere causae, atilii plerumque ipsas potitur pertineant multis rem quaeri pro, legendum didicisse credere ex maluisset per videtis. Cur discordans praetereat aliae ruinae dirigentur orestem eodem, praetermittenda divinum. Collegisti, deteriora malint loquuntur officii cotidie finitas referri doleamus ambigua acute. Adhaesiones ratione beate arbitraretur detractis perdiscere, constituant hostis polyaeno. Diu concederetur.</p>"},{"name":"TextBox","elementName":"TextBox","style":{"top":0,"left":0},"content":"Centre aligned","font":{"bold":true}}],"containers":[]},{"name":"left","elementName":"Container","style":{"top":0,"left":0,"height":180,"width":743,"position":"relative"},"boxes":[{"name":"HtmlBox","elementName":"HtmlBox","style":{"top":38,"left":0},"content":"<p style=\"text-align: right;\">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit, officiis viveremus aeternum superstitio suspicor alia nostram, quando nostros congressus susceperant concederetur leguntur iam, vigiliae democritea tantopere causae, atilii plerumque ipsas potitur pertineant multis rem quaeri pro, legendum didicisse credere ex maluisset per videtis. Cur discordans praetereat aliae ruinae dirigentur orestem eodem, praetermittenda divinum. Collegisti, deteriora malint loquuntur officii cotidie finitas referri doleamus ambigua acute. Adhaesiones ratione beate arbitraretur detractis perdiscere, constituant hostis polyaeno. Diu concederetur.</p>"},{"name":"TextBox","elementName":"TextBox","style":{"top":0,"left":0},"content":"Right aligned","font":{"bold":true}}],"containers":[]},{"name":"justified","elementName":"Container","style":{"top":0,"left":0,"height":180,"width":743,"position":"relative"},"boxes":[{"name":"HtmlBox","elementName":"HtmlBox","style":{"top":38,"left":0},"content":"<p style=\"text-align: justify;\">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit, officiis viveremus aeternum superstitio suspicor alia nostram, quando nostros congressus susceperant concederetur leguntur iam, vigiliae democritea tantopere causae, atilii plerumque ipsas potitur pertineant multis rem quaeri pro, legendum didicisse credere ex maluisset per videtis. Cur discordans praetereat aliae ruinae dirigentur orestem eodem, praetermittenda divinum. Collegisti, deteriora malint loquuntur officii cotidie finitas referri doleamus ambigua acute. Adhaesiones ratione beate arbitraretur detractis perdiscere, constituant hostis polyaeno. Diu concederetur.</p>"},{"name":"TextBox","elementName":"TextBox","style":{"top":0,"left":0},"content":"Justified aligned","font":{"bold":true}}],"containers":[]}]},{"name":"paragraphColumns","elementName":"Container","style":{"top":0,"left":0,"height":916,"width":751,"position":"relative"},"boxes":[],"containers":[{"name":"header","elementName":"Container","style":{"top":0,"left":0,"height":34,"width":746,"position":"relative"},"boxes":[{"name":"TextBox","elementName":"TextBox","style":{"top":0,"left":0},"content":"Paragraph with columns","font":{"bold":true,"size":16}}],"containers":[]},{"name":"left","elementName":"Container","style":{"top":0,"left":0,"height":204,"width":743,"position":"relative"},"boxes":[{"name":"HtmlBox","elementName":"HtmlBox","style":{"top":38,"left":0},"content":"<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit, officiis viveremus aeternum superstitio suspicor alia nostram, quando nostros congressus susceperant concederetur leguntur iam, vigiliae democritea tantopere causae, atilii plerumque ipsas potitur pertineant multis rem quaeri pro, legendum didicisse credere ex maluisset per videtis. Cur discordans praetereat aliae ruinae dirigentur orestem eodem, praetermittenda divinum. Collegisti, deteriora malint loquuntur officii cotidie finitas referri doleamus ambigua acute. Adhaesiones ratione beate arbitraretur detractis perdiscere, constituant hostis polyaeno. Diu concederetur.</p>","columnCount":3},{"name":"TextBox","elementName":"TextBox","style":{"top":0,"left":0},"content":"Left aligned","font":{"bold":true}}],"containers":[]},{"name":"centre","elementName":"Container","style":{"top":0,"left":0,"height":219,"width":740,"position":"relative"},"boxes":[{"name":"HtmlBox","elementName":"HtmlBox","style":{"top":40,"left":0},"content":"<p style=\"text-align: center;\">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit, officiis viveremus aeternum superstitio suspicor alia nostram, quando nostros congressus susceperant concederetur leguntur iam, vigiliae democritea tantopere causae, atilii plerumque ipsas potitur pertineant multis rem quaeri pro, legendum didicisse credere ex maluisset per videtis. Cur discordans praetereat aliae ruinae dirigentur orestem eodem, praetermittenda divinum. Collegisti, deteriora malint loquuntur officii cotidie finitas referri doleamus ambigua acute. Adhaesiones ratione beate arbitraretur detractis perdiscere, constituant hostis polyaeno. Diu concederetur.</p>","columnCount":4},{"name":"TextBox","elementName":"TextBox","style":{"top":0,"left":0},"content":"Centre aligned","font":{"bold":true}}],"containers":[]},{"name":"left","elementName":"Container","style":{"top":0,"left":0,"height":205,"width":743,"position":"relative"},"boxes":[{"name":"HtmlBox","elementName":"HtmlBox","style":{"top":38,"left":0},"content":"<p style=\"text-align: right;\">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit, officiis viveremus aeternum superstitio suspicor alia nostram, quando nostros congressus susceperant concederetur leguntur iam, vigiliae democritea tantopere causae, atilii plerumque ipsas potitur pertineant multis rem quaeri pro, legendum didicisse credere ex maluisset per videtis. Cur discordans praetereat aliae ruinae dirigentur orestem eodem, praetermittenda divinum. Collegisti, deteriora malint loquuntur officii cotidie finitas referri doleamus ambigua acute. Adhaesiones ratione beate arbitraretur detractis perdiscere, constituant hostis polyaeno. Diu concederetur.</p>","columnCount":2},{"name":"TextBox","elementName":"TextBox","style":{"top":0,"left":0},"content":"Right aligned","font":{"bold":true}}],"containers":[]},{"name":"justified","elementName":"Container","style":{"top":0,"left":0,"height":219,"width":743,"position":"relative"},"boxes":[{"name":"HtmlBox","elementName":"HtmlBox","style":{"top":38,"left":0},"content":"<p style=\"text-align: justify;\">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Malit profecta versatur nomine ocurreret multavit, officiis viveremus aeternum superstitio suspicor alia nostram, quando nostros congressus susceperant concederetur leguntur iam, vigiliae democritea tantopere causae, atilii plerumque ipsas potitur pertineant multis rem quaeri pro, legendum didicisse credere ex maluisset per videtis. Cur discordans praetereat aliae ruinae dirigentur orestem eodem, praetermittenda divinum. Collegisti, deteriora malint loquuntur officii cotidie finitas referri doleamus ambigua acute. Adhaesiones ratione beate arbitraretur detractis perdiscere, constituant hostis polyaeno. Diu concederetur.</p>","columnCount":4},{"name":"TextBox","elementName":"TextBox","style":{"top":0,"left":0},"content":"Justified aligned","font":{"bold":true}}],"containers":[]}]}],"data":{}};
-		var visibility = {"elementName":"ObjectSchema","name":"rootContainer","containers":[{"name":"container","elementName":"Container","style":{"top":0,"left":0,"height":109,"width":700,"position":"relative"},"boxes":[{"name":"CheckBoxInput","elementName":"CheckBoxInput","style":{"top":13,"left":11},"label":"Conditon 1","Binding":"ShowSection1"},{"name":"Copy CheckBoxInput","elementName":"CheckBoxInput","style":{"top":16,"left":135},"label":"Conditon 2","Binding":"ShowSection2"}],"containers":[]},{"name":"container","elementName":"Container","style":{"top":0,"left":0,"height":270,"width":746,"position":"relative"},"boxes":[],"containers":[{"name":"first","elementName":"Container","style":{"top":0,"left":0,"height":68,"width":695,"position":"relative"},"boxes":[{"name":"HtmlBox","elementName":"HtmlBox","style":{"top":10,"left":-5},"content":"<p>This section should be <strong>visible only if&nbsp;condition 1 is met.</strong></p>"}],"containers":[],"Visibility":{"Path":"ShowSection1"}},{"name":"second","elementName":"Container","style":{"top":0,"left":0,"height":68,"width":695,"position":"relative"},"boxes":[{"name":"HtmlBox","elementName":"HtmlBox","style":{"top":10,"left":-5},"content":"<p>This section should be <strong>always&nbsp;visible.</strong></p>"}],"containers":[],"Visibility":{}},{"name":"third","elementName":"Container","style":{"top":0,"left":0,"height":68,"width":695,"position":"relative"},"boxes":[{"name":"HtmlBox","elementName":"HtmlBox","style":{"top":10,"left":-5},"content":"<p>This section should be <strong>visible only if&nbsp;condition 2 is met.</strong></p>"}],"containers":[],"Visibility":{"Path":"ShowSection2"}},{"name":"fourt","elementName":"Container","style":{"top":0,"left":0,"height":68,"width":695,"position":"relative"},"boxes":[{"name":"HtmlBox","elementName":"HtmlBox","style":{"top":10,"left":-5},"content":"<p>This section should be <strong>always&nbsp;visible.</strong></p>"}],"containers":[],"Visibility":{}}]},{"name":"Copy container","elementName":"Container","style":{"top":0,"left":0,"height":270,"width":746,"position":"relative"},"boxes":[],"containers":[{"name":"first","elementName":"Container","style":{"top":0,"left":0,"height":68,"width":695,"position":"relative"},"boxes":[{"name":"HtmlBox","elementName":"HtmlBox","style":{"top":10,"left":-5},"content":"<p>This section should be <strong>visible only if&nbsp;condition 1 is met.</strong></p>"}],"containers":[],"Visibility":{"Path":"ShowSection1"}},{"name":"second","elementName":"Container","style":{"top":0,"left":0,"height":68,"width":695,"position":"relative"},"boxes":[{"name":"HtmlBox","elementName":"HtmlBox","style":{"top":10,"left":-5},"content":"<p>This section should be <strong>always&nbsp;visible.</strong></p>"}],"containers":[],"Visibility":{}},{"name":"third","elementName":"Container","style":{"top":0,"left":0,"height":68,"width":695,"position":"relative"},"boxes":[{"name":"HtmlBox","elementName":"HtmlBox","style":{"top":10,"left":-5},"content":"<p>This section should be <strong>visible only if&nbsp;condition 2 is met.</strong></p>"}],"containers":[],"Visibility":{"Path":"ShowSection2"}},{"name":"fourt","elementName":"Container","style":{"top":0,"left":0,"height":68,"width":695,"position":"relative"},"boxes":[{"name":"HtmlBox","elementName":"HtmlBox","style":{"top":10,"left":-5},"content":"<p>This section should be <strong>always&nbsp;visible.</strong></p>"}],"containers":[],"Visibility":{}}]},{"name":"Copy Copy container","elementName":"Container","style":{"top":0,"left":0,"height":270,"width":746,"position":"relative"},"boxes":[],"containers":[{"name":"first","elementName":"Container","style":{"top":0,"left":0,"height":68,"width":695,"position":"relative"},"boxes":[{"name":"HtmlBox","elementName":"HtmlBox","style":{"top":10,"left":-5},"content":"<p>This section should be <strong>visible only if&nbsp;condition 1 is met.</strong></p>"}],"containers":[],"Visibility":{"Path":"ShowSection1"}},{"name":"second","elementName":"Container","style":{"top":0,"left":0,"height":68,"width":695,"position":"relative"},"boxes":[{"name":"HtmlBox","elementName":"HtmlBox","style":{"top":10,"left":-5},"content":"<p>This section should be <strong>always&nbsp;visible.</strong></p>"}],"containers":[],"Visibility":{}},{"name":"third","elementName":"Container","style":{"top":0,"left":0,"height":68,"width":695,"position":"relative"},"boxes":[{"name":"HtmlBox","elementName":"HtmlBox","style":{"top":10,"left":-5},"content":"<p>This section should be <strong>visible only if&nbsp;condition 2 is met.</strong></p>"}],"containers":[],"Visibility":{"Path":"ShowSection2"}},{"name":"fourt","elementName":"Container","style":{"top":0,"left":0,"height":68,"width":695,"position":"relative"},"boxes":[{"name":"HtmlBox","elementName":"HtmlBox","style":{"top":10,"left":-5},"content":"<p>This section should be <strong>always&nbsp;visible.</strong></p>"}],"containers":[],"Visibility":{}}]},{"name":"Copy Copy Copy container","elementName":"Container","style":{"top":0,"left":0,"height":270,"width":746,"position":"relative"},"boxes":[],"containers":[{"name":"first","elementName":"Container","style":{"top":0,"left":0,"height":68,"width":695,"position":"relative"},"boxes":[{"name":"HtmlBox","elementName":"HtmlBox","style":{"top":10,"left":-5},"content":"<p>This section should be <strong>visible only if&nbsp;condition 1 is met.</strong></p>"}],"containers":[],"Visibility":{"Path":"ShowSection1"}},{"name":"second","elementName":"Container","style":{"top":0,"left":0,"height":68,"width":695,"position":"relative"},"boxes":[{"name":"HtmlBox","elementName":"HtmlBox","style":{"top":10,"left":-5},"content":"<p>This section should be <strong>always&nbsp;visible.</strong></p>"}],"containers":[],"Visibility":{}},{"name":"third","elementName":"Container","style":{"top":0,"left":0,"height":68,"width":695,"position":"relative"},"boxes":[{"name":"HtmlBox","elementName":"HtmlBox","style":{"top":10,"left":-5},"content":"<p>This section should be <strong>visible only if&nbsp;condition 2 is met.</strong></p>"}],"containers":[],"Visibility":{"Path":"ShowSection2"}},{"name":"fourt","elementName":"Container","style":{"top":0,"left":0,"height":68,"width":695,"position":"relative"},"boxes":[{"name":"HtmlBox","elementName":"HtmlBox","style":{"top":10,"left":-5},"content":"<p>This section should be <strong>always&nbsp;visible.</strong></p>"}],"containers":[],"Visibility":{}}]}],"data":{}};
-		return {schema:visibility}	
+	componentDidMount() {
+		
+		request.get('http://hand-formvalidation.rhcloud.com/assets/examples/Invoice.json')
+			.end(function(err, res){
+				if (res.ok) {
+					if (this.isMounted()) {
+						//alert(JSON.stringify(res.body));
+						var schema = res.body;
+						this.setState({
+							printSchema: schema,
+							data:schema.data || {}
+						});
+					}
+				} else {
+					alert('Oh no! error ' + res.text);
+				}
+			}.bind(this));
 	},
 	render: function() {
-		var schema = this.props.schema;
+		
+		var printSchema = this.state.printSchema;
+		if (printSchema === undefined) return (<div>Loading ...</div>);
+		var dataContext = this.bindToState('data');
 		return (
 			<div>
 				<div>
-					<PDFPagesTrigger schema={schema} data={this.state.data}>
+					<PDFPagesTrigger schema={printSchema} data={this.state.data}>
 						<input type="button" value="PDF Kit" />
 					</PDFPagesTrigger>
-					<PDFPagesTrigger type='pdfHummus' schema={schema} data={this.state.data}>
+					<PDFPagesTrigger type='pdfHummus' schema={printSchema} data={this.state.data}>
 						<input type="button" value="PDF Hummus" />
 					</PDFPagesTrigger>
+					<ModalTrigger modal={<MyModal schema={this.state.inputSchema} dataContext={dataContext} />}>
+						<input type="button" value="modal" />
+					</ModalTrigger>
 				</div>
-				<HtmlPagesRenderer widgets={widgets} schema={schema} data={this.state.data} />
+				<HtmlPagesRenderer widgets={widgets} schema={printSchema} dataContext={dataContext} />
 			</div>
 		)
 	}
