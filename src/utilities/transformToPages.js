@@ -148,8 +148,8 @@ function transformToPages(schema,data){
 
                 //grep parent dimensions
                 //TODO: !!!! temporarily - container width simulates boxes width
-                var height = parseInt(parent.style.height, 10);
-                var width = parseInt(parent.style.width, 10);
+                var height = parseInt(parent.style.height, 10)  - parseInt(el.style.top,10);
+                var width = parseInt(parent.style.width, 10) - parseInt(el.style.left,10);
                 //var height = parseInt(el.style.height,10);
                 //var width = parseInt(el.style.width,10);
                 if (isNaN(height)) height = 0;
