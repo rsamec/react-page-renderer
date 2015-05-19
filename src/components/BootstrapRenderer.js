@@ -62,7 +62,7 @@ var BootstrapRenderer = React.createClass({
 			var prop = box[propName];
 			//TODO: better test - it is a binding object?
 			if (_.isObject(prop) && !!prop.Path){
-				if (propName === "value" || propName === "checked") {
+				if (prop.Mode === "TwoWay") {
 					//two-way binding
 					box.valueLink = this.bindTo(dataContext, prop.Path);
 					box.value = undefined;

@@ -40,23 +40,21 @@ var HtmlPagesRenderer = React.createClass({
 				var box = node.element;
 				
 				//apply binding
-				for (var propName in box){
+				for (var propName in box) {
 					var prop = box[propName];
 					//TODO: better test - it is a binding object?
-					if (_.isObject(prop) && !!prop.Path){
-						if (propName === "value" || propName === "checked") {
-							//two-way binding
-							box.valueLink = this.bindTo(this.props.dataContext, prop.Path);
-							box.value = undefined;
-                            //
-							////error - one way binding
-							//var error = ref(this.props.errors,prop.Path);
-							//if (error !== undefined) {
-							//	box.help = error.ErrorMessage;
-							//	box.bsStyle = error.HasErrors ? 'error' : '';
-							//}
-						}
-						
+					if (_.isObject(prop) && !!prop.Path && prop.Mode === "TwoWay") {
+						//two-way binding
+						box.valueLink = this.bindTo(this.props.dataContext, prop.Path);
+						box.value = undefined;
+						//
+						////error - one way binding
+						//var error = ref(this.props.errors,prop.Path);
+						//if (error !== undefined) {
+						//	box.help = error.ErrorMessage;
+						//	box.bsStyle = error.HasErrors ? 'error' : '';
+						//}
+
 					}
 				}
 				//if (!!box.Binding) {

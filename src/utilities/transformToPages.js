@@ -181,7 +181,7 @@ function transformToPages(schema,data){
             for (var propName in box){
                 var prop = box[propName];
                 //TODO: better test - it is a binding object?
-                if (_.isObject(prop) && !!prop.Path){
+                if (_.isObject(prop) && !!prop.Path && prop.Mode !== 'TwoWay'){
                     //one-way binding
                     box[propName] = dataBinder.getValue(prop.Path);
                 }
