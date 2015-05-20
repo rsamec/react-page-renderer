@@ -90,7 +90,8 @@ function transformToPages(schema,data){
         }
     });
 
-    //step -> transform relative positions to absolute positions, process repeatable sections (containers)
+    //step -> transform relative positions to absolute positions
+	var pageHeight = 1065;
     var globalTop = 0;
     var trav = function(node){
 
@@ -108,6 +109,18 @@ function transformToPages(schema,data){
         if (children === undefined) return computedHeight;
         var childrenHeight = 0;
 
+		//unbreakable -> if section is too height to have enough place to fit the the page - move it to the next page
+		var startOnNewPage =  false;
+		if (!!node.unbreakable){
+			var nodeBottom = globalTop + nodeHeight;
+			var nextPageTop = Math.ceil(globalTop/pageHeight) * pageHeight;
+			startOnNewPage = nodeBottom > nextPageTop;
+		}
+		
+		//startOnNewPage - move globalTop to the next page
+		if (!!node.startOnNewPage || startOnNewPage) globalTop = Math.ceil(globalTop/pageHeight) * pageHeight;
+		
+		
         //set absolute top property - use last global top + node top (container can have top != 0)
         if (node.style !== undefined) node.style.top = globalTop + nodeTop;
 
@@ -132,7 +145,6 @@ function transformToPages(schema,data){
 
     //step -> reduce to boxes - using containers absolute positions (top,height) and its dimensions (with, height)
     //step -> create pages and add boxes to them
-    var pageHeight = 1065;
     var pages = [];
     var currentPage;
     traverse(clonedSchema).reduce(function (occ,x) {
@@ -142,11 +154,11 @@ function transformToPages(schema,data){
             for (var i in x){
                 var el = x[i];
 
-                //grep parent positions
+                //grab parent positions
                 var top = parseInt(parent.style.top,10) + parseInt(el.style.top,10)
                 var left = parseInt(parent.style.left,10) + parseInt(el.style.left,10);
 
-                //grep parent dimensions
+                //grab parent dimensions
                 //TODO: !!!! temporarily - container width simulates boxes width
                 var height = parseInt(parent.style.height, 10)  - parseInt(el.style.top,10);
                 var width = parseInt(parent.style.width, 10) - parseInt(el.style.left,10);
@@ -155,7 +167,7 @@ function transformToPages(schema,data){
                 if (isNaN(height)) height = 0;
                 if (isNaN(width)) width = 0;
 
-
+				
                 //create newPage
                 if (currentPage === undefined || (top + height) > pageHeight * pages.length){
                     var newPage ={pageNumber:pages.length + 1,boxes:[]}
