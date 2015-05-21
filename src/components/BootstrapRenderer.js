@@ -2,56 +2,11 @@ var React = require('react');
 var traverse = require('traverse');
 var _ = require('underscore');
 
+import deepClone from '../utilities/deepClone.js';
 import BindToMixin from 'react-binding';
 
-var BootstrapRenderer = React.createClass({
+var Container = React.createClass({
 	mixins:[BindToMixin],
-
-	transformToBoxes:function(objectSchema){
-		//visible
-		var clone = traverse(objectSchema).map(function (x) {
-			return x;
-		});
-
-		//transform from relative to absolute
-		var containers = traverse(clone).map(function (x) {
-			if (this.key === "containers"){
-				var heigth =0;
-				for (var i in x){
-					var container = x[i];
-					container.style.top = heigth;
-					var tempHeight =parseInt(container.style.height,10);
-					heigth +=  tempHeight!==undefined?tempHeight:0;
-				}
-			}
-			return x;
-		});
-		//reduce to boxes
-		var boxes = [];
-		var pages = traverse(containers).reduce(function (occ,x) {
-			//if (this.key === "containers") return this.node.boxes;
-
-			if (this.key === "boxes"){
-				var parent = this.parent.node;
-				//console.log("style:" + node.style.top + " " + node.style.height + " " + node.style.left + " " + node.style.width);
-
-				for (var i in x){
-					var el = x[i];
-					var top = parseInt(parent.style.top,10) + parseInt(el.style.top,10);
-					var left = parseInt(parent.style.left,10) + parseInt(el.style.left,10);
-					var height = parseInt(el.style.height,10);
-					var width = parseInt(el.style.width,10);
-					if (isNaN(height)) height = 0;
-					if (isNaN(width)) width = 0;
-
-					// set another text box
-					boxes.push({element:x[i],style:{'left':left,'top':top, 'position':'absolute'}});
-				}
-			}
-			return occ;
-		}, boxes);
-		return boxes;
-	},
 	applyBinding:function(box){
 		var dataContext = this.props.dataContext;
 		var ref = function (obj, str) {
@@ -62,7 +17,15 @@ var BootstrapRenderer = React.createClass({
 			var prop = box[propName];
 			//TODO: better test - it is a binding object?
 			if (_.isObject(prop) && !!prop.Path){
-				if (prop.Mode === "TwoWay") {
+				if (propName === 'onAdd') {
+					var selfBinding = this.bindArrayTo(dataContext,prop.Path);
+					box.onClick = function(e){ selfBinding.add()}
+				}
+				else if (propName === 'onRemove'){
+					var selfBinding = this.props.arrayContext;
+					box.onClick = function(e){  selfBinding.remove(dataContext.value);}
+				}
+				else if (prop.Mode === "TwoWay") {
 					//two-way binding
 					box.valueLink = this.bindTo(dataContext, prop.Path);
 					box.value = undefined;
@@ -96,24 +59,90 @@ var BootstrapRenderer = React.createClass({
 
 	},
 	render: function () {
-		var style={height:'100%', width:'100%'};
-		var boxes = this.transformToBoxes(this.props.schema);
+
+		var containers = this.props.containers || [];
+		var boxes = this.props.boxes || [];
+		
+		var styles = {
+			left: this.props.left,
+			top: this.props.top,
+			height: this.props.height,
+			width: this.props.width,
+			position: this.props.position
+		};
+		var widgets = this.props.widgets;
+		var dataContext = this.props.dataContext;
 		return (
-			<div style={style}>
-				<div>
-                {boxes.map(function (node, i) {
-					var element = node.element;
-					var style = node.style;
-					var component = this.createComponent(element);
+			<div className='cContainer' style={styles}>
+             {containers.map(function (container, index) {
+				 var repeats =[{c:container,d:dataContext}];
+				 if (container.elementName === "Repeater") {
+					 var arrayContext = this.bindArrayTo(dataContext, container.Binding.Path);
+					 var items = arrayContext.items;
+				
+					 	 repeats = items.length !== 0 ? _.map(items, function (item,index) {
+						 return {c: deepClone(container), d: item, arrayContext:arrayContext};
+					 }, this) : [];
+				 };
+				 
+				 return (<div>
+				 {repeats.map(function (obj, index) {
+					 var c = obj.c;
+					 var key = c.name + index;
+
+					 var left = c.style.left === undefined ? 0 : parseInt(c.style.left, 10);
+					 var top = c.style.top === undefined ? 0 : parseInt(c.style.top, 10);
+
+					 return (
+						 <Container key={key}
+							 left={left}
+							 top={top}
+							 height={c.style.height}
+							 width={c.style.width}
+							 position={c.style.position}
+							 boxes={c.boxes}
+							 containers={c.containers}
+							 widgets={widgets}
+							 dataContext={obj.d}
+							 arrayContext={obj.arrayContext}
+						 />
+					 )
+				 })
+					 }
+				 </div>)
+			 }, this)
+				 }
+                {boxes.map(function (box, index) {
+
+				
+					var key = box.name + index;
+
+
+					var boxComponent = this.createComponent(box, key);
+					var left = box.style.left === undefined ? 0 : parseInt(box.style.left, 10);
+					var top = box.style.top === undefined ? 0 : parseInt(box.style.top, 10);
+					var boxStyle = {top:top,left:left};
 					return (
-						<div style={style}>
-                            {component}
+						<div className='cBox' style={boxStyle}>
+                                {boxComponent}
 						</div>
 					);
-				}, this)}
-				</div>
+				}, this)
+					}
 			</div>
 		);
+	}
+});
+var BootstrapRenderer = React.createClass({
+	mixins:[BindToMixin],
+	render(){
+		return (<Container
+			containers={this.props.schema.containers}
+			boxes={this.props.schema.boxes}
+			isRoot={true}
+			widgets={this.props.widgets}
+			dataContext={this.props.dataContext}
+		/>)
 	}
 });
 
