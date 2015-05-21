@@ -6,10 +6,13 @@ var _ = require('underscore');
 
 var HtmlPage = React.createClass({
 	render: function () {
+		var style = {left:580,position:'absolute'};
+		var component = this.props.errorFlag?React.createElement(this.props.widgets['Shapes.CornerBox'],{text:'', orientation:'topRight',width:70, size:150,style:{}, strokeWidth:1, fill:'darkred'}):React.createElement('span',{});
 		return (
 			<div className="cPageOuter">
 				<div className="cPage">
-			{this.props.children}
+					<div style={style}>{component}</div>
+					{this.props.children}
 				</div>
 			</div>
 		);
@@ -68,7 +71,7 @@ var HtmlPagesRenderer = React.createClass({
 		return (
 			<div id="section-to-print">
 		{pages.map(function (page, i) {
-			return (<HtmlPage pageNumber={page.pageNumber}>
+			return (<HtmlPage pageNumber={page.pageNumber} widgets={this.props.widgets} errorFlag={this.props.errorFlag}>
 		{page.boxes.map(function (node, i) {
 			var element = node.element;
 			var style = node.style;

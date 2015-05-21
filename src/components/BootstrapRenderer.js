@@ -28,7 +28,7 @@ var Container = React.createClass({
 				else if (prop.Mode === "TwoWay") {
 					//two-way binding
 					box.valueLink = this.bindTo(dataContext, prop.Path);
-					box.value = undefined;
+					//box.value = undefined;
 					
 					//error - one way binding
 					var error = ref(this.props.errors,prop.Path);
@@ -54,7 +54,7 @@ var Container = React.createClass({
 
 		this.applyBinding(box);
 
-		var props = _.omit(box,'style');
+		var props = _.omit(box,['style','value']);
 		return React.createElement(widget,props, box.content!== undefined?React.DOM.span(null, box.content):undefined);
 
 	},
@@ -72,16 +72,21 @@ var Container = React.createClass({
 		};
 		var widgets = this.props.widgets;
 		var dataContext = this.props.dataContext;
+		var errors = this.props.errors;
+		
 		return (
 			<div className='cContainer' style={styles}>
              {containers.map(function (container, index) {
-				 var repeats =[{c:container,d:dataContext}];
+				 var repeats =[{c:container,d:dataContext,e:errors}];
 				 if (container.elementName === "Repeater") {
 					 var arrayContext = this.bindArrayTo(dataContext, container.Binding.Path);
+					 var arrayErrors;
+					 if (errors[container.Binding.Path]!== undefined) arrayErrors = errors[container.Binding.Path].Children;
+					 
 					 var items = arrayContext.items;
 				
 					 	 repeats = items.length !== 0 ? _.map(items, function (item,index) {
-						 return {c: deepClone(container), d: item, arrayContext:arrayContext};
+						 return {c: deepClone(container), d: item,e:arrayErrors!==undefined?arrayErrors[index]:undefined, arrayContext:arrayContext};
 					 }, this) : [];
 				 };
 				 
@@ -103,8 +108,10 @@ var Container = React.createClass({
 							 boxes={c.boxes}
 							 containers={c.containers}
 							 widgets={widgets}
+							 errors={obj.e}
 							 dataContext={obj.d}
 							 arrayContext={obj.arrayContext}
+							 
 						 />
 					 )
 				 })
@@ -142,6 +149,7 @@ var BootstrapRenderer = React.createClass({
 			isRoot={true}
 			widgets={this.props.widgets}
 			dataContext={this.props.dataContext}
+			errors={this.props.errors}
 		/>)
 	}
 });
