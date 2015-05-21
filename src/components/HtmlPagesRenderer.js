@@ -6,12 +6,13 @@ var _ = require('underscore');
 
 var HtmlPage = React.createClass({
 	render: function () {
-		var style = {left:580,position:'absolute'};
-		var component = this.props.errorFlag?React.createElement(this.props.widgets['Shapes.CornerBox'],{text:'', orientation:'topRight',width:70, size:150,style:{}, strokeWidth:1, fill:'darkred'}):React.createElement('span',{});
+		//var style = {left:580,position:'absolute'};
+		//var component = this.props.errorFlag?React.createElement(this.props.widgets['Shapes.CornerBox'],{text:'', orientation:'topRight',width:70, size:150,style:{}, strokeWidth:1, fill:'darkred'}):React.createElement('span',{});
+		var classNames = 'cPage';
+		if (this.props.errorFlag) classNames += ' errorFlag';
 		return (
 			<div className="cPageOuter">
-				<div className="cPage">
-					<div style={style}>{component}</div>
+				<div className={classNames}>
 					{this.props.children}
 				</div>
 			</div>
