@@ -19,11 +19,9 @@ var BootstrapPublisher = React.createClass({
 		return Utils.CompositeDotObject.Transform(this.state.rules.Validate(this.props.dataContext.value)).Main;
 	},
 	render() {
-		var style = {position: 'absolute', width: '100%'};
-		return (
-				<div style={style}>
-					<BootstrapRenderer widgets={this.props.widgets} dataContext={this.props.dataContext} errors={this.result()} schema={this.props.schema}/>
-				</div>
+		return (<div>
+				<BootstrapRenderer widgets={this.props.widgets} dataContext={this.props.dataContext} errors={this.result()} schema={this.props.schema}/>
+			</div>
 		);
 	}
 });

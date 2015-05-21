@@ -48,7 +48,7 @@ function transformToPages(schema,data){
             if (parent !==undefined) parent = parent.node;
 
             //decrese the height of the parent container
-            if (parent !== undefined) {
+            if (parent !== undefined && parent.style !== undefined) {
                 var parentHeight = parseInt(parent.style.height, 10);
                 var nodeHeight = parseInt(x.style.height, 10);
                 if (!isNaN(nodeHeight) && !isNaN(parentHeight)) parent.style.height = parentHeight - nodeHeight;
