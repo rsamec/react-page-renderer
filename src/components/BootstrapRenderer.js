@@ -3,8 +3,10 @@ var traverse = require('traverse');
 var _ = require('underscore');
 
 import deepClone from '../utilities/deepClone.js';
-import BindToMixin from 'react-binding';
+import {numberConverter} from '../utilities/converters.js';
 
+import BindToMixin from 'react-binding';
+ 
 var Container = React.createClass({
 	mixins:[BindToMixin],
 	applyBinding:function(box){
@@ -27,7 +29,14 @@ var Container = React.createClass({
 				}
 				else if (prop.Mode === "TwoWay") {
 					//two-way binding
-					box.valueLink = this.bindTo(dataContext, prop.Path);
+					var converter;
+					if (!!prop.Converter) {
+						converter = new numberConverter();	
+						
+					}
+					
+					box.valueLink = converter!==undefined?this.bindTo(dataContext, prop.Path,converter):this.bindTo(dataContext,prop.Path);
+					
 					//box.value = undefined;
 					
 					//error - one way binding
@@ -54,7 +63,7 @@ var Container = React.createClass({
 
 		this.applyBinding(box);
 
-		var props = _.omit(box,['style','value']);
+		var props = _.omit(box,['value']);
 		return React.createElement(widget,props, box.content!== undefined?React.DOM.span(null, box.content):undefined);
 
 	},
