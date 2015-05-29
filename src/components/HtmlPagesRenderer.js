@@ -7,24 +7,30 @@ var HtmlPage = React.createClass({
 		//var style = {left:580,position:'absolute'};
 		//var component = this.props.errorFlag?React.createElement(this.props.widgets['Shapes.CornerBox'],{text:'', orientation:'topRight',width:70, size:150,style:{}, strokeWidth:1, fill:'darkred'}):React.createElement('span',{});
 		var options = this.props.pageOptions;
+		
+		
+		var dpi = 96;
+		var pointToPixel = function(point){ return (point/72) * dpi;};
+		var defaultMargin = 21.6;
+
+		var pageSize = [standardPageSizes.A4[0], standardPageSizes.A4[1]];
+		if (options !== undefined && options.height && options.width) {
+			pageSize = [options.width,options.height];
+		}
 		//TODO: implement other sizes
-		//var paper = {};
-		//if (options.height && options.width) {
-		//	paper.width = options.width
-		//	paper.height = options.height
-		//}
 		//else {
 		//	paper.format = options.format || 'A4'
 		//	paper.orientation = options.orientation || 'portrait'
 		//}
-		
-		var dpi = 96;
-		var pointToPixel = function(point){ return (point/72) * dpi;};
-		var defaultMargin = pointToPixel(21.6);
-		
-		
-		var pageSize = [pointToPixel(standardPageSizes.A4[0]), pointToPixel(standardPageSizes.A4[1])];
+
 		var margins = [defaultMargin,defaultMargin,defaultMargin,defaultMargin];
+		if (options !== undefined && options.margin !== undefined){
+			margins = [options.margin.top || defaultMargin, options.margin.right || defaultMargin, options.margin.bottom || defaultMargin, options.margin.left || defaultMargin];
+		}
+		
+		//convert points to pixel
+		pageSize = [pointToPixel(pageSize[0]),pointToPixel(pageSize[1])];
+		margins = [pointToPixel(margins[0]),pointToPixel(margins[1]),pointToPixel(margins[2]),pointToPixel(margins[3])];
 		
 		//if (this.props.errorFlag) classNames += ' errorFlag';
 		var pageInnerStyle = { overflow: 'visible',width: pageSize[0] - (margins[0] + margins[2]),height: pageSize[1] - (margins[1] + margins[3]),position: 'relative',backgroundColor: 'transparent'};
@@ -55,7 +61,7 @@ var HtmlPagesRenderer = React.createClass({
 		return (
 			<div id="section-to-print">
 				{pages.map(function (page, i) {
-					return (<HtmlPage pageNumber={page.pageNumber} widgets={this.props.widgets} errorFlag={this.props.errorFlag}>
+					return (<HtmlPage pageNumber={page.pageNumber} widgets={this.props.widgets} errorFlag={this.props.errorFlag} pageOptions={this.props.pageOptions}>
 							{page.boxes.map(function (node, i) {
 								var component = this.createComponent(node.element);
 								return (
