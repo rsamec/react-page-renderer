@@ -1,18 +1,38 @@
 var React = require('react');
 var transformToPages = require('../utilities/transformToPages');
-
-var BindToMixin = require('react-binding');
-var _ = require('underscore');
+var standardPageSizes = require('./standardPageSizes');
 
 var HtmlPage = React.createClass({
 	render: function () {
 		//var style = {left:580,position:'absolute'};
 		//var component = this.props.errorFlag?React.createElement(this.props.widgets['Shapes.CornerBox'],{text:'', orientation:'topRight',width:70, size:150,style:{}, strokeWidth:1, fill:'darkred'}):React.createElement('span',{});
-		var classNames = 'cPage';
-		if (this.props.errorFlag) classNames += ' errorFlag';
+		var options = this.props.pageOptions;
+		//TODO: implement other sizes
+		//var paper = {};
+		//if (options.height && options.width) {
+		//	paper.width = options.width
+		//	paper.height = options.height
+		//}
+		//else {
+		//	paper.format = options.format || 'A4'
+		//	paper.orientation = options.orientation || 'portrait'
+		//}
+		
+		var dpi = 96;
+		var pointToPixel = function(point){ return (point/72) * dpi;};
+		var defaultMargin = pointToPixel(21.6);
+		
+		
+		var pageSize = [pointToPixel(standardPageSizes.A4[0]), pointToPixel(standardPageSizes.A4[1])];
+		var margins = [defaultMargin,defaultMargin,defaultMargin,defaultMargin];
+		
+		//if (this.props.errorFlag) classNames += ' errorFlag';
+		var pageInnerStyle = { overflow: 'visible',width: pageSize[0] - (margins[0] + margins[2]),height: pageSize[1] - (margins[1] + margins[3]),position: 'relative',backgroundColor: 'transparent'};
+		var pageStyle = {width: pageSize[0],height: pageSize[1],paddingTop: margins[0], paddingRight:margins[1],paddingBottom: margins[2], paddingLeft:margins[3],border:'gray 1px solid',backgroundColor:'#ffffff'};
+	
 		return (
-			<div className="cPageOuter">
-				<div className={classNames}>
+			<div style={pageStyle}>
+				<div style={pageInnerStyle}>
 					{this.props.children}
 				</div>
 			</div>
@@ -21,71 +41,31 @@ var HtmlPage = React.createClass({
 });
 
 var HtmlPagesRenderer = React.createClass({
-	mixins: [BindToMixin],
-	//getInitialState: function () {
-	//	return {data: this.props.data || {}}
-	//},
 	createComponent: function (box) {
 		var widget = this.props.widgets[box.elementName];
 		if (widget === undefined) return React.DOM.span(null, 'Component ' + box.elementName + ' is not register among widgets.');
 
-		var props = box; //_.omit(box,'style');
+		var props = box;
 		return React.createElement(widget, props, box.content !== undefined ? React.DOM.span(null, box.content) : undefined);
 	},
 	render: function () {
 		
 		var pages = transformToPages(this.props.schema,this.props.dataContext.value);
 
-		 //this.bindToState('data');
-
-		//apply two-way binding
-		_.each(pages, function (page) {
-			_.each(page.boxes, function (node) {
-				var box = node.element;
-				
-				//apply binding
-				for (var propName in box) {
-					var prop = box[propName];
-					//TODO: better test - it is a binding object?
-					if (_.isObject(prop) && !!prop.Path && prop.Mode === "TwoWay") {
-						//two-way binding
-						box.valueLink = this.bindTo(this.props.dataContext, prop.Path);
-						box.value = undefined;
-						//
-						////error - one way binding
-						//var error = ref(this.props.errors,prop.Path);
-						//if (error !== undefined) {
-						//	box.help = error.ErrorMessage;
-						//	box.bsStyle = error.HasErrors ? 'error' : '';
-						//}
-
-					}
-				}
-				//if (!!box.Binding) {
-				//	if (box.elementName === "ReactBootstrap.Input" || box.elementName === "TextBoxInput" || box.elementName === "CheckBoxInput") {
-				//		box.valueLink = this.bindTo(this.props.dataContext, box.Binding);
-				//	}
-				//}
-			}, this)
-
-		}, this);
 		return (
 			<div id="section-to-print">
-		{pages.map(function (page, i) {
-			return (<HtmlPage pageNumber={page.pageNumber} widgets={this.props.widgets} errorFlag={this.props.errorFlag}>
-		{page.boxes.map(function (node, i) {
-			var element = node.element;
-			var style = node.style;
-			var component = this.createComponent(element);
-			return (
-				<div style={style}>
-			{component}
-				</div>
-			);
-		}, this)}
-			</HtmlPage>)
-		}, this)}
-
+				{pages.map(function (page, i) {
+					return (<HtmlPage pageNumber={page.pageNumber} widgets={this.props.widgets} errorFlag={this.props.errorFlag}>
+							{page.boxes.map(function (node, i) {
+								var component = this.createComponent(node.element);
+								return (
+									<div style={ node.style}>
+										{component}
+									</div>
+								);
+							}, this)}
+					</HtmlPage>)
+				}, this)}
 			</div>
 		);
 	}
