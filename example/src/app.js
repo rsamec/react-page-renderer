@@ -94,7 +94,7 @@ var App = React.createClass({
 						<input type="button" value="modal" />
 					</ModalTrigger>
 				</div>
-				<HtmlPagesRenderer widgets={widgets} schema={printSchema} data={printSchema.data} errorFlag={true} />
+				<HtmlPagesRenderer widgets={widgets} schema={printSchema} data={printSchema.data} errorFlag={true} pageOptions={{margin:{top:300, left: 60}}} />
 			</div>
 		)
 	}
