@@ -50,7 +50,7 @@ var HtmlPagesRenderer = React.createClass({
 	},
 	render: function () {
 		
-		var pages = transformToPages(this.props.schema,this.props.dataContext.value);
+		var pages = transformToPages(this.props.schema,this.props.data);
 
 		return (
 			<div id="section-to-print">
