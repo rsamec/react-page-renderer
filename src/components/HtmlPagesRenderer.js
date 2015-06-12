@@ -1,6 +1,7 @@
 import React from 'react';
 import _ from 'underscore';
 import BindToMixin from 'react-binding';
+import {IntlMixin} from 'react-intl';
 import {numberConverter} from '../utilities/converters.js';
 
 
@@ -9,6 +10,7 @@ var standardPageSizes = require('./standardPageSizes');
 
 
 var HtmlPage = React.createClass({
+	mixins:[IntlMixin],
 	render: function () {
 		//var style = {left:580,position:'absolute'};
 		//var component = this.props.errorFlag?React.createElement(this.props.widgets['Shapes.CornerBox'],{text:'', orientation:'topRight',width:70, size:150,style:{}, strokeWidth:1, fill:'darkred'}):React.createElement('span',{});
@@ -101,9 +103,14 @@ var HtmlPagesRenderer = React.createClass({
 		var widget = this.props.widgets[box.elementName];
 		if (widget === undefined) return React.DOM.span(null, 'Component ' + box.elementName + ' is not register among widgets.');
 
+		//optionally add internatialization data
+		if (this.props.intlData !== undefined) box = _.extend(this.props.intlData,box);
+		
+		//optionally add binding
 		if (this.props.dataContext !== undefined) this.applyBinding(box,this.props.dataContext);
-		var props = box;
-		return React.createElement(widget, props, box.content !== undefined ? React.DOM.span(null, box.content) : undefined);
+		
+		//render
+		return React.createElement(widget, box, box.content !== undefined ? React.DOM.span(null, box.content) : undefined);
 	},
 	render: function () {
 		
