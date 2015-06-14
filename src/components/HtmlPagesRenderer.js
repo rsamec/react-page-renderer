@@ -104,7 +104,8 @@ var HtmlPagesRenderer = React.createClass({
 		if (widget === undefined) return React.DOM.span(null, 'Component ' + box.elementName + ' is not register among widgets.');
 
 		//optionally add internatialization data
-		if (this.props.intlData !== undefined) box = _.extend(box,_.omit(this.props.intlData,'locales'));
+		if (this.props.intlData !== undefined) box = _.extend(box,box.locales !==undefined?_.omit(this.props.intlData,'locales'):this.props.intlData);
+		
 		
 		//optionally add binding
 		if (this.props.dataContext !== undefined) this.applyBinding(box,this.props.dataContext);
