@@ -1,8 +1,8 @@
 var React = require('react');
 var BindToMixin = require('react-binding');
 var HtmlPagesRenderer = require('react-page-renderer').HtmlPagesRenderer;
-var PDFPagesTrigger = require('react-page-renderer').PDFPagesTrigger;
-var BootstrapPublisher = require('react-page-renderer').BootstrapPublisher;
+//var PDFPagesTrigger = require('react-page-renderer').PDFPagesTrigger;
+//var BootstrapPublisher = require('react-page-renderer').BootstrapPublisher;
 
 var WidgetFactory = require('react-designer-widgets');
 var widgets = new WidgetFactory().getWidgets();
@@ -88,12 +88,6 @@ var App = React.createClass({
 		return (
 			<div>
 				<div>
-					<PDFPagesTrigger schema={schema} data={this.state.data}>
-						<input type="button" value="PDF Kit" />
-					</PDFPagesTrigger>
-					<PDFPagesTrigger type='pdfHummus' schema={schema} data={this.state.data}>
-						<input type="button" value="PDF Hummus" />
-					</PDFPagesTrigger>
 					<ModalTrigger modal={<MyModal schema={schema} dataContext={dataContext} />}>
 						<input type="button" value="modal" />
 					</ModalTrigger>
