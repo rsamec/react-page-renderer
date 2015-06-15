@@ -1,6 +1,6 @@
 {
   "name": "react-page-renderer",
-  "version": "0.0.29",
+  "version": "0.0.30",
   "private": false,
   "description": "My React Component",
   "main": "lib/react-page-renderer.js",
@@ -15,7 +15,7 @@
     "url": "https://github.com/rsamec/react-page-renderer/issues"
   },
   "dependencies": {
-    "business-rules-engine": "^1.2.7",
+    "business-rules-engine": "^1.2.8",
     "react": "^0.13.3",
     "react-binding": "^0.6.3",
     "react-designer-widgets": "^0.1.27",
