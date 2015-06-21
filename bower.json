@@ -1,7 +1,7 @@
 {
   "name": "my-component",
   "main": "dist/my-component.min.js",
-  "version": "0.0.30",
+  "version": "0.0.31",
   "homepage": "https://github.com/JedWatson/react-input-autosize",
   "authors": [
     "Jed Watson"

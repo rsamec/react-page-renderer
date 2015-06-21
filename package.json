@@ -1,6 +1,6 @@
 {
   "name": "react-page-renderer",
-  "version": "0.0.30",
+  "version": "0.0.31",
   "private": false,
   "description": "My React Component",
   "main": "lib/react-page-renderer.js",
@@ -17,8 +17,7 @@
   "dependencies": {
     "business-rules-engine": "^1.2.8",
     "react": "^0.13.3",
-    "react-binding": "^0.6.3",
-    "react-designer-widgets": "^0.1.27",
+    "react-binding": "^0.6.4",
     "react-intl": "^1.2.0",
     "reactify": "^1.1.1",
     "traverse": "^0.6.6",
