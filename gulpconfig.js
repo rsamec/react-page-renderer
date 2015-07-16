@@ -10,8 +10,10 @@ var pkg = JSON.parse(require('fs').readFileSync('./package.json'));
 // Default dependencies from package.json, except reactify (which is used for
 // the build). Dependencies can be customised by hard-coding this array.
 var dependencies = [];
+//dependencies.push('react/addons');
 Object.keys(pkg.dependencies).forEach(function(i) {
 	if (i !== 'reactify') dependencies.push(i);
+	
 });
 
 module.exports = {
