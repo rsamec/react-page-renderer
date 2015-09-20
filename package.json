@@ -1,6 +1,6 @@
 {
   "name": "react-page-renderer",
-  "version": "0.0.32",
+  "version": "0.0.33",
   "private": false,
   "description": "My React Component",
   "main": "lib/react-page-renderer.js",
@@ -28,8 +28,10 @@
     "react-designer-widgets": "^0.1.30",
     "react-intl": "^1.2.0",
     "react-pathjs-chart": "^0.2.4",
-    "react-shapes": "0.0.3"
+    "react-shapes": "0.0.3",
+    "superagent": "^1.4.0"
   },
+  "peerDependencies": {},
   "browser": "lib/react-page-renderer.js",
   "browserify": {
     "transform": [
