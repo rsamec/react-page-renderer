@@ -1,15 +1,11 @@
 var HtmlPagesRenderer = require('./components/HtmlPagesRenderer');
 var HtmlBookRenderer = require('./components/HtmlBookRenderer');
-var PDFPagesTrigger = require('./components/PDFPagesTrigger');
-var BootstrapPublisher = require('./components/BootstrapPublisher');
-
+var WidgetRenderer = require('./components/WidgetRenderer');
 var GraphicUtil = require('./utilities/graphicUtil');
 
-module.exports = {
+export default {
 	HtmlPagesRenderer:HtmlPagesRenderer,
 	HtmlBookRenderer:HtmlBookRenderer,
-	PDFPagesTrigger:PDFPagesTrigger,
-	BootstrapPublisher:BootstrapPublisher,
-	
-	GraphicUtil:GraphicUtil
+	GraphicUtil:GraphicUtil,
+	WidgetRenderer:WidgetRenderer
 };

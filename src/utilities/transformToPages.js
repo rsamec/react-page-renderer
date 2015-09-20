@@ -1,13 +1,7 @@
-'use strict';
-
-var React = require('react');
-var traverse = require('traverse');
-var _ = require('underscore');
-
-var deepClone = require('../utilities/deepClone');
-
-//binding
-var pathObjecBinder = require('./pathObjectBinder');
+import React from 'react';
+import traverse from 'traverse';
+import _ from 'lodash';
+import pathObjecBinder from './pathObjectBinder';
 
 /**
  * This reduce containers objects (containers, repeaters) to boxes group by pages.
@@ -31,7 +25,7 @@ function transformToPages(schema,data){
 
 
     //first clone schema
-    var clonedSchema = deepClone(schema);
+    var clonedSchema = _.cloneDeep(schema);
 
     //prepare helper object to grap data binded values -> create data binder
     var dataBinder = new pathObjecBinder(function(){return data});
@@ -40,53 +34,60 @@ function transformToPages(schema,data){
 
     //step -> remove invisible sections (containers)
     traverse(clonedSchema).forEach(function (x) {
-        if (!!x && x.elementName === CONTAINER_NAME && !!x.Visibility && !!x.Visibility.Path && !dataBinder.getValue(x.Visibility.Path)) {
+		
+        if (!!x && x.elementName === CONTAINER_NAME) {
+			var visibility = x.props && x.props.visibility;
+			if (!!visibility && !!visibility.path && !dataBinder.getValue(visibility.path)) {
 
-            //get parent
-            var parent = this.parent;
-            if (parent !==undefined) parent = parent.parent;
-            if (parent !==undefined) parent = parent.node;
+				//get parent
+				var parent = this.parent;
+				if (parent !== undefined) parent = parent.parent;
+				if (parent !== undefined) parent = parent.node;
 
-            //decrese the height of the parent container
-            if (parent !== undefined && parent.style !== undefined) {
-                var parentHeight = parseInt(parent.style.height, 10);
-                var nodeHeight = parseInt(x.style.height, 10);
-                if (!isNaN(nodeHeight) && !isNaN(parentHeight)) parent.style.height = parentHeight - nodeHeight;
-            }
+				//decrese the height of the parent container
+				if (parent !== undefined && parent.style !== undefined) {
+					var parentHeight = parseInt(parent.style.height, 10);
+					var nodeHeight = parseInt(x.style.height, 10);
+					if (!isNaN(nodeHeight) && !isNaN(parentHeight)) parent.style.height = parentHeight - nodeHeight;
+				}
 
-            //invisible section -> delete
-            this.delete();
-        }
+				//invisible section -> delete
+				this.delete();
+			}
+		}
     });
 
     //step -> process repeatable sections (containers) - for each row - deep clone row template
     traverse(clonedSchema).forEach(function (x) {
-        if (!!x && x.elementName === REPEATER_CONTAINER_NAME && !!x.Binding && !!x.Binding.Path) {
-            var dataObj = dataBinder.getValue(x.Binding.Path);
-            if (!!dataObj) {
+        if (!!x && x.elementName === REPEATER_CONTAINER_NAME){
+		  var binding = x.props && x.props.binding;	
+		  if(!!binding && !!binding.path) {
+			  var dataObj = dataBinder.getValue(binding.path);
+			  if (!!dataObj) {
 
-                //for each row - deep clone row template
-                var clonedRows = [];
-                for (var i=0;i!= dataObj.length;i++){
+				  //for each row - deep clone row template
+				  var clonedRows = [];
+				  for (var i = 0; i != dataObj.length; i++) {
 
-                    var clonedRow = deepClone(x);
+					  var clonedRow = _.cloneDeep(x);
 
-                    //apply binding using square brackets notation
-                    traverse(clonedRow).forEach(function (y) {
-                        //TODO: simple solution for demonstration purposes
-                        if (this.key === "Path"){
-                            var rowExpression = x.Binding.Path + "[" + i + "]." + y;
-                            this.update(rowExpression);
-                        }
-                    });
+					  //apply binding using square brackets notation
+					  traverse(clonedRow).forEach(function (y) {
+						  //TODO: simple solution for demonstration purposes
+						  if (this.key === "path") {
+							  var rowExpression = binding.path + "[" + i + "]." + y;
+							  this.update(rowExpression);
+						  }
+					  });
 
-                    clonedRows.push(clonedRow);
-                }
+					  clonedRows.push(clonedRow);
+				  }
 
-                //assign all cloned rows to parent section
-                x.containers = clonedRows;
-                x.boxes = [];
-            }
+				  //assign all cloned rows to parent section
+				  x.containers = clonedRows;
+				  x.boxes = [];
+			  }
+		  }
         }
     });
 
@@ -95,6 +96,7 @@ function transformToPages(schema,data){
     var globalTop = 0;
     var trav = function(node){
 
+		var props = node.props;
         if (node === undefined) return 0;
 
         //grap height and top properties
@@ -111,14 +113,14 @@ function transformToPages(schema,data){
 
 		//unbreakable -> if section is too height to have enough place to fit the the page - move it to the next page
 		var startOnNewPage =  false;
-		if (!!node.unbreakable){
+		if (!!props.unbreakable){
 			var nodeBottom = globalTop + nodeHeight;
 			var nextPageTop = Math.ceil(globalTop/pageHeight) * pageHeight;
 			startOnNewPage = nodeBottom > nextPageTop;
 		}
 		
 		//startOnNewPage - move globalTop to the next page
-		if (!!node.startOnNewPage || startOnNewPage) globalTop = Math.ceil(globalTop/pageHeight) * pageHeight;
+		if (!!props.startOnNewPage || startOnNewPage) globalTop = Math.ceil(globalTop/pageHeight) * pageHeight;
 		
 		
         //set absolute top property - use last global top + node top (container can have top != 0)
@@ -154,14 +156,17 @@ function transformToPages(schema,data){
             for (var i in x){
                 var el = x[i];
 
+				var elTop = el.style.top && parseInt(el.style.top,10) || 0;
+				var elLeft = el.style.left && parseInt(el.style.left,10) || 0;
+				
                 //grab parent positions
-                var top = parseInt(parent.style.top,10) + parseInt(el.style.top,10)
-                var left = parseInt(parent.style.left,10) + parseInt(el.style.left,10);
+                var top = parseInt(parent.style.top,10) + elTop;
+                var left = parseInt(parent.style.left,10) + elLeft;
 
                 //grab parent dimensions
                 //TODO: !!!! temporarily - container width simulates boxes width
-                var height = parseInt(parent.style.height, 10)  - parseInt(el.style.top,10);
-                var width = parseInt(parent.style.width, 10) - parseInt(el.style.left,10);
+                var height = parseInt(parent.style.height, 10)  - elTop;
+                var width = parseInt(parent.style.width, 10) - elLeft;
                 //var height = parseInt(el.style.height,10);
                 //var width = parseInt(el.style.width,10);
                 if (isNaN(height)) height = 0;
@@ -187,21 +192,21 @@ function transformToPages(schema,data){
 
 
     //step -> apply one-way binding
-    _.each(pages,function(page){
-        _.each(page.boxes,function(node) {
-            var box = node.element;
-            for (var propName in box){
-                var prop = box[propName];
-                //TODO: better test - it is a binding object?
-                if (_.isObject(prop) && !!prop.Path && prop.Mode !== 'TwoWay'){
-                    //one-way binding
-                    box[propName] = dataBinder.getValue(prop.Path);
-                }
-            }
-        })
-    })
+    //_.each(pages,function(page){
+    //    _.each(page.boxes,function(node) {
+    //        var box = node.element;
+    //        for (var propName in box){
+    //            var prop = box[propName];
+    //            //TODO: better test - it is a binding object?
+    //            if (_.isObject(prop) && !!prop.Path && prop.Mode !== 'TwoWay'){
+    //                //one-way binding
+    //                box[propName] = dataBinder.getValue(prop.Path);
+    //            }
+    //        }
+    //    })
+    //});
 
     return pages;
-}
+};
 
-module.exports = transformToPages;
+export default transformToPages;

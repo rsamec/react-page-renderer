@@ -1,5 +1,3 @@
-'use strict';
-
 var pathObjectBinder = (function () {
     function pathObjectBinder(sourceGetter) {
         this.sourceGetter = sourceGetter;
@@ -53,4 +51,4 @@ var pathObjectBinder = (function () {
     };
     return pathObjectBinder;
 })();
-module.exports = pathObjectBinder;
+export default pathObjectBinder;

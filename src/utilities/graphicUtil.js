@@ -1,4 +1,4 @@
-var standardPageSizes = require('./standardPageSizes');
+import standardPageSizes from './standardPageSizes';
 
 class GraphicPrimitive {
 	

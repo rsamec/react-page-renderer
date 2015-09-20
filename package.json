@@ -15,13 +15,11 @@
     "url": "https://github.com/rsamec/react-page-renderer/issues"
   },
   "dependencies": {
-    "business-rules-engine": "^1.2.8",
+    "lodash": "^3.10.1",
     "react": "^0.13.3",
     "react-binding": "^0.6.4",
-    "react-intl": "^1.2.0",
     "reactify": "^1.1.1",
-    "traverse": "^0.6.6",
-    "underscore": "^1.8.3"
+    "traverse": "^0.6.6"
   },
   "devDependencies": {
     "gulp": "^3.8.10",
@@ -29,8 +27,8 @@
     "react-component-gulp-tasks": "^0.7.0",
     "react-designer-widgets": "^0.1.30",
     "react-intl": "^1.2.0",
-    "react-pathjs-chart": "0.0.18",
-    "react-tools": "^0.13.3"
+    "react-pathjs-chart": "^0.2.4",
+    "react-shapes": "0.0.3"
   },
   "browser": "lib/react-page-renderer.js",
   "browserify": {
@@ -45,7 +43,6 @@
     "test": "echo \"no tests yet\" && exit 0"
   },
   "keywords": [
-    "react",
-    "react-component"
+    "react"
   ]
 }
