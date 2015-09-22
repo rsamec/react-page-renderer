@@ -1,9 +1,7 @@
 import React from 'react';
-import {IntlMixin} from 'react-intl';
 import GraphicPrimitive from '../utilities/graphicUtil.js';
 
 var HtmlPage = React.createClass({
-	mixins: [IntlMixin],
 	render: function () {
 		//var style = {left:580,position:'absolute'};
 		//var component = this.props.errorFlag?React.createElement(this.props.widgets['Shapes.CornerBox'],{text:'', orientation:'topRight',width:70, size:150,style:{}, strokeWidth:1, fill:'darkred'}):React.createElement('span',{});

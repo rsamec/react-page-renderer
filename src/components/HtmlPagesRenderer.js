@@ -1,7 +1,5 @@
 import React from 'react';
 import _ from 'lodash';
-//import BindToMixin from 'react-binding';
-import {IntlMixin} from 'react-intl';
 
 import HtmlPage from './HtmlPage.js';
 import WidgetRenderer from './WidgetRenderer.js';

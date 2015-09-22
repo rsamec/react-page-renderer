@@ -39,7 +39,7 @@ var Widgets = {
 	'Chart.StockLine': Chart.StockLine,
 	'Chart.Scatterplot': Chart.Scatterplot,
 	'Chart.Radar': Chart.Radar,
-	'Chart.Tree': Chart.Tree,
+	'Chart.Tree': Chart.Tree
 };
 
 //external widgets with more controls

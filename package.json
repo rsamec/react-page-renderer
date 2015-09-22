@@ -1,6 +1,6 @@
 {
   "name": "react-page-renderer",
-  "version": "0.0.33",
+  "version": "0.0.34",
   "private": false,
   "description": "My React Component",
   "main": "lib/react-page-renderer.js",
@@ -25,8 +25,7 @@
     "gulp": "^3.8.10",
     "react-bootstrap": "^0.22.3",
     "react-component-gulp-tasks": "^0.7.0",
-    "react-designer-widgets": "^0.1.30",
-    "react-intl": "^1.2.0",
+    "react-designer-widgets": "^0.1.38",
     "react-pathjs-chart": "^0.2.4",
     "react-shapes": "0.0.3",
     "superagent": "^1.4.0"
