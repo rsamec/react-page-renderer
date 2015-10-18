@@ -1,10 +1,16 @@
 import React from 'react';
 import _ from 'lodash';
 import BindToMixin from 'react-binding';
+import Transmit from 'react-transmit';
 
 var WidgetRenderer = React.createClass({
 	mixins:[BindToMixin],
-	applyBinding(widget,box,dataBinder){
+	getInitialState(){
+		return {hasFetched:false}
+	},
+	applyBinding(widget,box,dataBinder,dataSources){
+
+		var fragments = {};
 		//go through all properties
 		for (var propName in box) {
 			var prop = box[propName];
@@ -28,6 +34,8 @@ var WidgetRenderer = React.createClass({
 
 				var bindingProps = prop; //field.type === 'bindingEditor'?prop:prop.binding;
 				if (_.isObject(bindingProps) && !!bindingProps.path) {
+
+
 					//apply binding
 					var converter;
 					if (!!prop.converter && !!bindingProps.converter.compiled) {
@@ -35,15 +43,30 @@ var WidgetRenderer = React.createClass({
 					}
 					var binding = this.bindTo(dataBinder, bindingProps.path, converter);
 
+					if (dataSources !==undefined){
+						var pos = bindingProps.path.indexOf('.');
+						if (pos === -1) continue;
+
+						//grab pathes
+						var modelPath = bindingProps.path.substr(0,pos);
+						var falcorPath = bindingProps.path.substr(pos + 1);
+
+						fragments[propName] = function(){ return dataSources[modelPath].get(falcorPath)};
+						//remove
+						delete box[propName];
+						continue;
+					}
+
 					if (prop.mode === 'TwoWay') {
 						//two-way binding
-						//box.valueLink = this.bindTo(dataBinder, bindingProps.path, converter);
+						if (this.props.designer!== true) box.valueLink = this.bindTo(dataBinder, bindingProps.path, converter);
 						box[propName] = undefined;
 					}
 					else {
 						//one-way binding
 						//box[propName] = dataBinder.value[prop.Path];
 						box[propName] = binding.value;
+
 					}
 				}
 				else {
@@ -52,8 +75,10 @@ var WidgetRenderer = React.createClass({
 				}
 			}
 		}
+		return fragments;
 	},
 	render(){
+		const {designer} = this.props;
 		var box = this.props.node;
 		var widget  = this.props.widget;
 		if (widget === undefined) {
@@ -63,12 +88,19 @@ var WidgetRenderer = React.createClass({
 		var customStyle= this.props.customStyle;
 
 		//apply property resolution strategy -> default style -> custom style -> local style
-		var widgetStyle = _.cloneDeep(widget.metaData.props || {});
+		var widgetStyle = _.cloneDeep(widget.metaData && widget.metaData.props || {});
 		if (customStyle !== undefined) widgetStyle = _.merge(widgetStyle,customStyle);
 		var props = _.merge(widgetStyle,box.props);
-		if (this.props.dataBinder !== undefined)  this.applyBinding(widget,props,this.props.dataBinder);
 
-		return  React.createElement(widget,props,props.content !== undefined ? React.DOM.div({ dangerouslySetInnerHTML: {__html: props.content } }) : null);
+		var fragments;
+		if (this.props.dataBinder !== undefined) fragments=this.applyBinding(widget,props,this.props.dataBinder,this.bindTo(this.props.dataBinder, "dataSources").value);
+
+		if (designer !==true && _.keys(fragments).length !==0) widget = Transmit.createContainer(widget,{fragments: fragments});
+		return React.createElement(widget, props, props.content !== undefined ? React.DOM.div({dangerouslySetInnerHTML: {__html: props.content}}) : null);
+
+
+		//return React.createElement(widget, props, props.content !== undefined ? React.DOM.div({dangerouslySetInnerHTML: {__html: props.content}}) : null);
+
 	}
 });
 export default  WidgetRenderer;

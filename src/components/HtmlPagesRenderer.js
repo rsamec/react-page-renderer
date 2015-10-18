@@ -27,13 +27,15 @@ var HtmlPagesRenderer = React.createClass({
 	render: function () {
 		
 		var pages = transformToPages(this.props.schema,this.props.data);
-		
+		var ctx = (this.props.schema.props && this.props.schema.props.context) || {};
+		var customStyles =ctx['styles'] || {};
 		return (
 			<div id="section-to-print" style={this.props.style}>
 				{pages.map(function (page, i) {
 					return (<HtmlPage pageNumber={page.pageNumber} widgets={this.props.widgets} errorFlag={this.props.errorFlag} pageOptions={this.props.pageOptions}>
 							{page.boxes.map(function (node, i) {
-								var widget = <WidgetRenderer widget={this.props.widgets[node.element.elementName]} node={node.element} dataBinder={this.props.dataContext} />;
+								var elName = node.element.elementName;
+								var widget = <WidgetRenderer widget={this.props.widgets[elName]} node={node.element} customStyle={customStyles[elName]} dataBinder={this.props.dataContext} />;
 								return (
 									<div style={ node.style}>
 										{widget}

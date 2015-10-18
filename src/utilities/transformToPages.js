@@ -17,6 +17,18 @@ import pathObjecBinder from './pathObjectBinder';
  * @param {object} data - data context used for data binding
  * @returns {object} schema to render -> pages with boxes with data-binded values
  */
+var generateCssTransform = function(transform) {
+    var cssTransform = '';
+
+    if (transform.tx !== undefined)  cssTransform += ' translateX(' + transform.tx + 'px)';
+    if (transform.ty !== undefined) cssTransform += ' translateY(' + transform.ty + 'px)';
+    if (transform.rz !== undefined) cssTransform += ' rotate(' + transform.rz + 'rad)';
+    if (transform.sx !== undefined) cssTransform += ' scaleX(' + transform.sx + ')';
+    if (transform.sy !== undefined) cssTransform += ' scaleY(' + transform.sy + ')';;
+
+    return cssTransform
+};
+
 function transformToPages(schema,data){
 
     const CONTAINER_NAME = "Container";
@@ -175,7 +187,7 @@ function transformToPages(schema,data){
 				
                 //create newPage
                 if (currentPage === undefined || (top + height) > pageHeight * pages.length){
-                    var newPage ={pageNumber:pages.length + 1,boxes:[]}
+                    var newPage ={pageNumber:pages.length + 1,boxes:[]};
                     pages.push(newPage);
                     currentPage = newPage;
                 }
@@ -183,8 +195,17 @@ function transformToPages(schema,data){
                 //decrease top according the pages
                 if (pages.length > 1){ top -= (pages.length -1) * pageHeight };
 
+                var style = {'left':left,'top':top,'height': height,'width': width, 'position':'absolute'};
+                if (el.style.width!== undefined) style.width = el.style.width;
+                if (el.style.height!== undefined) style.height = el.style.height;
+
+
+                if (el.style.transform !== undefined) {
+                    style.WebkitTransform = generateCssTransform(el.style.transform);
+                    style.transform = generateCssTransform(el.style.transform);
+                }
                 // set another box
-                currentPage.boxes.push({element:x[i],style:{'left':left,'top':top,'height': height,'width': width, 'position':'absolute'}});
+                currentPage.boxes.push({element:x[i],style:style});
             }
         }
         return occ;

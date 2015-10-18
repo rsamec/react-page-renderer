@@ -44,9 +44,10 @@ var HtmlPage = React.createClass({
 			paddingRight: margins[1],
 			paddingBottom: margins[2],
 			paddingLeft: margins[3],
-			border: 'gray 1px solid',
+			border: (options && options.border) || 'gray 1px solid',
 			backgroundColor: '#ffffff'
 		};
+
 
 		return (
 			<div>

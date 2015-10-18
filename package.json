@@ -1,6 +1,6 @@
 {
   "name": "react-page-renderer",
-  "version": "0.0.34",
+  "version": "0.0.35",
   "private": false,
   "description": "My React Component",
   "main": "lib/react-page-renderer.js",
@@ -18,6 +18,7 @@
     "lodash": "^3.10.1",
     "react": "^0.13.3",
     "react-binding": "^0.6.4",
+    "react-transmit": "^3.0.7",
     "reactify": "^1.1.1",
     "traverse": "^0.6.6"
   },
