@@ -1,7 +1,6 @@
-import React from 'react';
 import traverse from 'traverse';
 import _ from 'lodash';
-import pathObjecBinder from './pathObjectBinder';
+import {normalizePathByRemovePathSet} from './getPathSetRange.js';
 
 /**
  * This reduce containers objects (containers, repeaters) to boxes group by pages.
@@ -28,19 +27,11 @@ var generateCssTransform = function(transform) {
 
     return cssTransform
 };
-
-function transformToPages(schema,data){
+function transformToPages(clonedSchema){
 
     const CONTAINER_NAME = "Container";
     const REPEATER_CONTAINER_NAME = "Repeater";
     const BOXES_COLLECTION_NAME = "boxes";
-
-
-    //first clone schema
-    var clonedSchema = _.cloneDeep(schema);
-
-    //prepare helper object to grap data binded values -> create data binder
-    var dataBinder = new pathObjecBinder(function(){return data});
 
     //TODO: each step means its own recursion - optimize by doing all steps using one recursion
 
@@ -49,7 +40,7 @@ function transformToPages(schema,data){
 		
         if (!!x && x.elementName === CONTAINER_NAME) {
 			var visibility = x.props && x.props.visibility;
-			if (!!visibility && !!visibility.path && !dataBinder.getValue(visibility.path)) {
+			if (!!visibility){
 
 				//get parent
 				var parent = this.parent;
@@ -73,33 +64,31 @@ function transformToPages(schema,data){
     traverse(clonedSchema).forEach(function (x) {
         if (!!x && x.elementName === REPEATER_CONTAINER_NAME){
 		  var binding = x.props && x.props.binding;	
-		  if(!!binding && !!binding.path) {
-			  var dataObj = dataBinder.getValue(binding.path);
-			  if (!!dataObj) {
+		  if(!!binding && !!binding.path && !!binding.range) {
+              //for each row - deep clone row template
+              var clonedRows = [];
+              var range = binding.range;
+              for (var i = range.from; i != range.to; i++) {
 
-				  //for each row - deep clone row template
-				  var clonedRows = [];
-				  for (var i = 0; i != dataObj.length; i++) {
+                  var clonedRow = _.cloneDeep(x);
+                  clonedRow.elementName = CONTAINER_NAME;
+                  //apply binding using square brackets notation
+                  traverse(clonedRow).forEach(function (y) {
+                      //TODO: simple solution for demonstration purposes
+                      if (this.key === "path") {
+                          var rowExpression = normalizePathByRemovePathSet(binding.path) + "[" + i + "]." + y;
+                          this.update(rowExpression);
+                      }
+                  });
 
-					  var clonedRow = _.cloneDeep(x);
+                  clonedRows.push(clonedRow);
+              }
 
-					  //apply binding using square brackets notation
-					  traverse(clonedRow).forEach(function (y) {
-						  //TODO: simple solution for demonstration purposes
-						  if (this.key === "path") {
-							  var rowExpression = binding.path + "[" + i + "]." + y;
-							  this.update(rowExpression);
-						  }
-					  });
+              //assign all cloned rows to parent section
+              x.containers = clonedRows;
+              x.boxes = [];
 
-					  clonedRows.push(clonedRow);
-				  }
-
-				  //assign all cloned rows to parent section
-				  x.containers = clonedRows;
-				  x.boxes = [];
-			  }
-		  }
+          }
         }
     });
 
@@ -201,7 +190,7 @@ function transformToPages(schema,data){
 
 
                 if (el.style.transform !== undefined) {
-                    style.WebkitTransform = generateCssTransform(el.style.transform);
+                    style.webkitTransform = generateCssTransform(el.style.transform);
                     style.transform = generateCssTransform(el.style.transform);
                 }
                 // set another box

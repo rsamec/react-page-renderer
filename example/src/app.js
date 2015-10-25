@@ -57,10 +57,14 @@ var App = React.createClass({
 	mixins:[BindToMixin],
 	getInitialState(){
 		var schema = undefined;
-		return {schema:schema,data:schema && schema.defaultData || {}};	
+		return {
+			schema:schema,
+			data:schema && schema.defaultData || {},
+			book:false
+		};
 	},
 	componentDidMount() {
-		request.get('Chart_pie.json')
+		request.get('Charts_pages.json')
 			.end(function(err, res){
 				if (res.ok) {
 					if (this.isMounted()) {
@@ -92,9 +96,14 @@ var App = React.createClass({
 		if (schema === undefined) return (<div>Loading ...</div>);
 		if (this.state.data === undefined) return (<div>Loading data ...</div>);
 		var dataContext = this.bindToState('data');
+
 		return (
-			<div> 	
-				<HtmlPagesRenderer widgets={Widgets} schema={schema} data={this.state.data} dataContext={dataContext} intlData={schema.intlData} errorFlag={true} pageOptions={{margin:{top:20, left: 20}}} />
+			<div>
+				<a onClick={()=>{this.setState({book:!this.state.book})}}>{this.state.book?"Sequence":"Book"}</a>
+				<div>
+				{!this.state.book? <HtmlPagesRenderer widgets={Widgets} schema={schema} data={this.state.data} dataContext={dataContext} pageOptions={{margin:{top:20, left: 20}}} />:null}
+				{this.state.book?<HtmlBookRenderer widgets={Widgets} schema={schema} data={this.state.data} dataContext={dataContext} pageOptions={{margin:{top:20, left: 20}}} />:null}
+				</div>
 			</div>
 		)
 	}

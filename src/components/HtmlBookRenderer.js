@@ -1,7 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
 import GraphicPrimitive from '../utilities/graphicUtil.js';
-
 import HtmlPagesRenderer from './HtmlPagesRenderer.js';
 
 var HtmlBookRenderer = React.createClass({

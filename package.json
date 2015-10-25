@@ -1,6 +1,6 @@
 {
   "name": "react-page-renderer",
-  "version": "0.0.35",
+  "version": "0.0.36",
   "private": false,
   "description": "My React Component",
   "main": "lib/react-page-renderer.js",
@@ -15,6 +15,7 @@
     "url": "https://github.com/rsamec/react-page-renderer/issues"
   },
   "dependencies": {
+    "falcor-path-syntax": "^0.2.2",
     "lodash": "^3.10.1",
     "react": "^0.13.3",
     "react-binding": "^0.6.4",
