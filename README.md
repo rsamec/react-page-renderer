@@ -1,10 +1,10 @@
 react-page-renderer
 =======================
 
-It generates pages for document according to [PTT] (https://github.com/rsamec/ptt) and renders [react components]() to HTML.
+It generates pages for document according to [PTT] (https://github.com/rsamec/ptt) and renders [react components](https://facebook.github.io/react/) to HTML.
 
-__HtmlPagesRenderer__ - pages are displayed in continuous sequence
-__HtmlBookRenderer__ - pages are book view using [turn](http://www.turnjs.com/)
++	__HtmlPagesRenderer__ - pages are displayed in continuous sequence
++	__HtmlBookRenderer__ - pages are book view using [turn](http://www.turnjs.com/)
 
 
 
@@ -69,14 +69,14 @@ React.render(<App />, document.getElementById('app'));
 __HtmlPagesRenderer__
 
 +	widgets - the list of widgets used for rendering
-+	schema - print object schema
++	schema - document to print - [PTT](https://github.com/rsamec/ptt) format
 +	data - data used to data bind values to schemas
 +	pageOptions - height and width of the page , margin of the page
 
 __HtmlBookRenderer__
 
 +	widgets - the list of widgets used for rendering
-+	schema - print object schema
++	schema - document to print - [PTT](https://github.com/rsamec/ptt) format
 +	data - data used to data bind values to schemas
 +	pageOptions - height and width of the page , margin of the page
 
