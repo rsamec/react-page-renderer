@@ -1,7 +1,7 @@
 react-page-renderer
 =======================
 
-It generates pages for document according to [PTT] (https://github.com/rsamec/ptt) and renders [react components](https://facebook.github.io/react/) to HTML.
+It generates pages for document according to [PTT](https://github.com/rsamec/ptt) and renders [react components](https://facebook.github.io/react/) to HTML.
 
 +	__HtmlPagesRenderer__ - pages are displayed in continuous sequence
 +	__HtmlBookRenderer__ - pages are book view using [turn](http://www.turnjs.com/)

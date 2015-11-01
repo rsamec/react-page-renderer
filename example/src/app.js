@@ -1,8 +1,10 @@
 import React from 'react';
 import BindToMixin from 'react-binding';
-import {HtmlPagesRenderer,HtmlBookRenderer,DataStore} from 'react-page-renderer';
+import {HtmlPagesRenderer,HtmlBookRenderer,BindingUtil} from 'react-page-renderer';
 import _ from 'lodash';
 import request from 'superagent';
+import falcor from 'falcor';
+import falcorDataSource from 'falcor-http-datasource';
 
 //widgets
 import Core from 'react-designer-widgets';
@@ -53,6 +55,16 @@ import ReactBootstrap from 'react-bootstrap';
 
 //var nameStore = new DataStore();
 
+var iterate = function (current,fce) {
+    var children = current.containers;
+
+    //iterate through containers
+    var containers = [];
+    for (var i = 0, len = children.length; i < len; i++) {
+        fce.apply(this,[children[i]]);
+		iterate(children[i],fce);
+    }
+};
 var App = React.createClass({
 	mixins:[BindToMixin],
 	getInitialState(){
@@ -63,17 +75,68 @@ var App = React.createClass({
 			book:false
 		};
 	},
+	bindToRepeater(schema,dataSources){
+
+		const CONTAINER_NAME = "Container";
+		const REPEATER_CONTAINER_NAME = "Repeater";
+
+
+		var dataBinder = this.bindToState('data');
+		if (dataBinder === undefined) return;
+
+		if (dataSources == undefined) return;
+
+		var self = this;
+
+		//step -> set repeatable sections (containers) -
+		iterate(schema, function (x) {
+			if (!!x && x.elementName === REPEATER_CONTAINER_NAME) {
+				var bindingProps = x.props && x.props.binding;
+
+
+				var binding = self.bindTo(dataBinder, bindingProps.path);
+
+
+				var pos = bindingProps.path.indexOf('.');
+				if (pos === -1) return;
+
+				//grab pathes
+				var modelPath = bindingProps.path.substr(0, pos);
+				var falcorPath = bindingProps.path.substr(pos + 1);
+
+				if (dataSources[modelPath] === undefined) return;
+				//var rangeFromPath = getArrayRange(falcorPath);
+				//if (rangeFromPath === undefined) {
+
+				if (falcorPath.indexOf('[') === -1) {
+					console.log(falcorPath);
+					dataSources[modelPath].getValue(falcorPath + '.length').then(function (response) {
+						console.log(falcorPath + " = " + response);
+						if (response !== undefined) binding.value = new Array(response);
+					});
+				}
+
+			}
+		});
+	},
+
 	componentDidMount() {
-		request.get('Charts_pages.json')
+		request.get('mfcr_summary (5).json')
 			.end(function(err, res){
 				if (res.ok) {
 					if (this.isMounted()) {
 						//alert(JSON.stringify(res.body));
 						var schema = res.body;
+						var dataSources = _.reduce(schema.props.dataSources,function(memo,value,key){
+							memo[key] = new falcor.Model({source: new falcorDataSource(value)});
+							return memo;
+						},{});
+
 						this.setState({
 							schema: schema,
-							data:schema.props.defaultData || {}
+							data:_.extend({dataSources:dataSources},schema.props.defaultData || {})
 						});
+						this.bindToRepeater(schema, dataSources);
 					}
 				} else {
 					alert('Oh no! error ' + res.text);
@@ -92,9 +155,9 @@ var App = React.createClass({
 	},
 	render: function() {
 		
-		var schema = this.state.schema;
+		var schema = BindingUtil.bindToSchema(_.cloneDeep(this.state.schema),this.state.data);
 		if (schema === undefined) return (<div>Loading ...</div>);
-		if (this.state.data === undefined) return (<div>Loading data ...</div>);
+		//if (this.state.data === undefined) return (<div>Loading data ...</div>);
 		var dataContext = this.bindToState('data');
 
 		return (

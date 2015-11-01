@@ -1,6 +1,5 @@
 import traverse from 'traverse';
 import _ from 'lodash';
-import {normalizePathByRemovePathSet} from './getPathSetRange.js';
 
 /**
  * This reduce containers objects (containers, repeaters) to boxes group by pages.
@@ -23,7 +22,7 @@ var generateCssTransform = function(transform) {
     if (transform.ty !== undefined) cssTransform += ' translateY(' + transform.ty + 'px)';
     if (transform.rz !== undefined) cssTransform += ' rotate(' + transform.rz + 'rad)';
     if (transform.sx !== undefined) cssTransform += ' scaleX(' + transform.sx + ')';
-    if (transform.sy !== undefined) cssTransform += ' scaleY(' + transform.sy + ')';;
+    if (transform.sy !== undefined) cssTransform += ' scaleY(' + transform.sy + ')';
 
     return cssTransform
 };
@@ -33,64 +32,7 @@ function transformToPages(clonedSchema){
     const REPEATER_CONTAINER_NAME = "Repeater";
     const BOXES_COLLECTION_NAME = "boxes";
 
-    //TODO: each step means its own recursion - optimize by doing all steps using one recursion
 
-    //step -> remove invisible sections (containers)
-    traverse(clonedSchema).forEach(function (x) {
-		
-        if (!!x && x.elementName === CONTAINER_NAME) {
-			var visibility = x.props && x.props.visibility;
-			if (!!visibility){
-
-				//get parent
-				var parent = this.parent;
-				if (parent !== undefined) parent = parent.parent;
-				if (parent !== undefined) parent = parent.node;
-
-				//decrese the height of the parent container
-				if (parent !== undefined && parent.style !== undefined) {
-					var parentHeight = parseInt(parent.style.height, 10);
-					var nodeHeight = parseInt(x.style.height, 10);
-					if (!isNaN(nodeHeight) && !isNaN(parentHeight)) parent.style.height = parentHeight - nodeHeight;
-				}
-
-				//invisible section -> delete
-				this.delete();
-			}
-		}
-    });
-
-    //step -> process repeatable sections (containers) - for each row - deep clone row template
-    traverse(clonedSchema).forEach(function (x) {
-        if (!!x && x.elementName === REPEATER_CONTAINER_NAME){
-		  var binding = x.props && x.props.binding;	
-		  if(!!binding && !!binding.path && !!binding.range) {
-              //for each row - deep clone row template
-              var clonedRows = [];
-              var range = binding.range;
-              for (var i = range.from; i != range.to; i++) {
-
-                  var clonedRow = _.cloneDeep(x);
-                  clonedRow.elementName = CONTAINER_NAME;
-                  //apply binding using square brackets notation
-                  traverse(clonedRow).forEach(function (y) {
-                      //TODO: simple solution for demonstration purposes
-                      if (this.key === "path") {
-                          var rowExpression = normalizePathByRemovePathSet(binding.path) + "[" + i + "]." + y;
-                          this.update(rowExpression);
-                      }
-                  });
-
-                  clonedRows.push(clonedRow);
-              }
-
-              //assign all cloned rows to parent section
-              x.containers = clonedRows;
-              x.boxes = [];
-
-          }
-        }
-    });
 
     //step -> transform relative positions to absolute positions
 	var pageHeight = 1065;
@@ -187,10 +129,11 @@ function transformToPages(clonedSchema){
                 var style = {'left':left,'top':top,'height': height,'width': width, 'position':'absolute'};
                 if (el.style.width!== undefined) style.width = el.style.width;
                 if (el.style.height!== undefined) style.height = el.style.height;
+                if (el.style.zIndex!== undefined) style.zIndex = el.style.zIndex;
 
 
                 if (el.style.transform !== undefined) {
-                    style.webkitTransform = generateCssTransform(el.style.transform);
+                    style.WebkitTransform = generateCssTransform(el.style.transform);
                     style.transform = generateCssTransform(el.style.transform);
                 }
                 // set another box

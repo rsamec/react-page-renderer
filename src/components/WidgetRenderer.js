@@ -2,59 +2,44 @@ import React from 'react';
 import _ from 'lodash';
 import BindToMixin from 'react-binding';
 import Transmit from 'react-transmit';
+import {getValueSync} from '../utilities/falcorPathUtil.js';
 
 var WidgetRenderer = React.createClass({
 	mixins:[BindToMixin],
-	shouldComponentUpdate(nextProps){
-		return this.props.node !== nextProps.node;
+	getInitialState(){
+		return {changed:false}
 	},
-	//componentDidMount(){
-	//	var box = this.props.node;
-	//	var dataBinder = this.props.dataBinder;
-	//	if (dataBinder === undefined) return;
-	//	var dataSources = this.bindTo(this.props.dataBinder, "dataSources").value;
-	//	if (dataSources == undefined) return;
-    //
-	//	for (var propName in box.props) {
-	//		var bindingProps = box.props[propName];
-    //
-	//		if (!(_.isObject(bindingProps) && !!bindingProps.path)) continue;
-    //
-    //
-	//		//apply binding
-	//		//var converter;
-	//		//if (!!bindingProps.converter && !!bindingProps.converter.compiled) {
-	//		//	converter = eval(bindingProps.converter.compiled);
-	//		//}
-	//		var binding = this.bindTo(dataBinder, bindingProps.path);
-    //
-    //
-	//		var pos = bindingProps.path.indexOf('.');
-	//		if (pos === -1) continue;
-    //
-	//		//grab pathes
-	//		var modelPath = bindingProps.path.substr(0, pos);
-	//		var falcorPath = bindingProps.path.substr(pos + 1);
-    //
-	//		if (dataSources[modelPath] === undefined) continue;
-    //
-	//	   	dataSources[modelPath].get(falcorPath).then(function(response){
-	//			var pathSet =falcorPath.indexOf('..') !== -1;
-	//			if (pathSet) {
-	//				console.log(binding.path);
-	//				console.log(response.json);
-	//			}
-	//			var val = _.get(response.json,pathSet?falcorPath.substr(0,falcorPath.indexOf('[')):falcorPath);
-	//			binding.value =val;//converter!==undefined? converter.format(val):val;
-	//		});
-	//	}
-    //
-	//},
+	shouldComponentUpdate(nextProps){
+		return true;
+		//return this.hasTwoWayBinding();
+		//return this.props.node !== nextProps.node ;
+	},
 	hasBinding(propName){
 		//TODO: find better way how to detect binding
 		var widget = this.props.widget;
 		var field = widget.metaData && widget.metaData.settings && widget.metaData.settings.fields && widget.metaData.settings.fields[propName];
 		return field !== undefined && (field.type === 'bindingEditor' || field.type === 'bindingValueEditor');
+	},
+	hasTwoWayBinding(){
+		var widget = this.props.widget;
+		var box = this.props.node;
+		var widgetStyle = _.cloneDeep(widget.metaData && widget.metaData.props || {});
+		var props = _.merge(widgetStyle,box.props);
+
+		for (var propName in props) {
+			var prop = props[propName];
+			if (prop === undefined) continue;
+
+			var isBinding = this.hasBinding(propName);
+			if (!isBinding) continue;
+
+			if (prop.mode === 'TwoWay') return true;
+			//if (prop.mode === undefined){
+			//	if ((widget.metaData && widget.metaData.props || {}).mode === 'TwoWay') return true;
+			//}
+
+		}
+		return false;
 	},
 	applyBinding(box,dataBinder,dataSources){
 
@@ -69,7 +54,7 @@ var WidgetRenderer = React.createClass({
 			if (isBinding) {
 
 				if (prop === undefined) continue;
-				
+
 				//bind to const value
 				if (prop.value !== undefined) {
 					box[propName] = prop.value;
@@ -99,8 +84,8 @@ var WidgetRenderer = React.createClass({
 							if (dataSources[modelPath] !== undefined) {
 								fragments[propName] = function () {
 									return dataSources[modelPath].get(falcorPath).then(function(response){
-										var pathSet =falcorPath.indexOf('..') !== -1;
-										var val = _.get(response.json,pathSet?falcorPath.substr(0,falcorPath.indexOf('[')):falcorPath);
+										//console.log(response);
+										var val = getValueSync(response,falcorPath);
 										return converter!==undefined?converter.format(val):val;
 									});
 								};
@@ -126,7 +111,7 @@ var WidgetRenderer = React.createClass({
 				}
 				else {
 					//binding is not correctly set - do not apply binding
-					box[propName] = undefined;
+					//box[propName] = undefined;
 				}
 			}
 		}

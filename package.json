@@ -1,6 +1,6 @@
 {
   "name": "react-page-renderer",
-  "version": "0.0.36",
+  "version": "0.0.37",
   "private": false,
   "description": "My React Component",
   "main": "lib/react-page-renderer.js",
@@ -17,6 +17,7 @@
   "dependencies": {
     "falcor-path-syntax": "^0.2.2",
     "lodash": "^3.10.1",
+    "q": "^1.4.1",
     "react": "^0.13.3",
     "react-binding": "^0.6.4",
     "react-transmit": "^3.0.7",
@@ -24,7 +25,11 @@
     "traverse": "^0.6.6"
   },
   "devDependencies": {
+    "expect.js": "^0.3.1",
+    "falcor": "^0.1.13",
+    "falcor-http-datasource": "^0.1.2",
     "gulp": "^3.8.10",
+    "jasmine": "^2.3.2",
     "react-bootstrap": "^0.22.3",
     "react-component-gulp-tasks": "^0.7.0",
     "react-designer-widgets": "^0.1.38",
