@@ -1,0 +1,195 @@
+{
+  "elementName": "ObjectSchema",
+  "name": "mfcr_summary",
+  "containers": [
+    {
+      "name": "container 1",
+      "elementName": "Container",
+      "style": {
+        "top": 0,
+        "left": 0,
+        "height": 782,
+        "width": 781,
+        "position": "relative"
+      },
+      "props": {
+        "startOnNewPage": false,
+        "unbreakable": false
+      },
+      "boxes": [
+        {
+          "name": "Pie",
+          "elementName": "Chart.Pie",
+          "style": {
+            "top": 0,
+            "left": 0,
+            "transform": {}
+          },
+          "props": {
+            "data": {
+              "path": "mfcr.summary.year2015[5..15]['dodavatel','price']",
+              "converter": {
+                "code": "return {\n\tformat:function(value){\n      var result = _lodash.map(value,function(item){return {name:item.dodavatel,price:item.price}});\n      return result;\n\t}\n}",
+                "compiled": "\"use strict\";\n\n(function () {\n     return {\n          format: function format(value) {\n               var result = _lodash.map(value, function (item) {\n                    return { name: item.dodavatel, price: item.price };\n               });\n               return result;\n          }\n     };\n})();"
+              },
+              "mode": "OneWay"
+            },
+            "accessorKey": "price",
+            "options": {
+              "margin": {},
+              "width": 720,
+              "height": 700,
+              "color": "#7e70cf",
+              "r": 300,
+              "R": 80,
+              "legendPosition": "topLeft",
+              "animate": {},
+              "label": {
+                "fontSize": 16,
+                "color": "#f20a0a"
+              }
+            }
+          }
+        }
+      ],
+      "containers": []
+    },
+    {
+      "name": "container 2",
+      "elementName": "Container",
+      "style": {
+        "top": 0,
+        "left": 0,
+        "height": 47,
+        "width": 737,
+        "position": "relative"
+      },
+      "props": {
+        "startOnNewPage": false,
+        "unbreakable": false
+      },
+      "boxes": [
+        {
+          "name": "TangleBoolText",
+          "elementName": "Core.TangleBoolText",
+          "style": {
+            "top": 0,
+            "left": 2
+          },
+          "props": {
+            "value": {
+              "path": "showVypis",
+              "mode":"TwoWay"
+            },
+            "trueText": "Zobrazit výpis",
+            "falseText": "Skrýt výpis"
+          }
+        }
+      ],
+      "containers": []
+    },
+    {
+      "name": "container 3",
+      "elementName": "Container",
+      "style": {
+        "top": 0,
+        "left": 0,
+        "height": 82,
+        "width": 736,
+        "position": "relative"
+      },
+      "props": {
+        "visibility": {
+          "path": "showVypis",
+          "mode": "OneWay"
+        },
+        "startOnNewPage": false,
+        "unbreakable": true
+      },
+      "boxes": [],
+      "containers": [
+        {
+          "name": "repeater",
+          "elementName": "Repeater",
+          "style": {
+            "top": 0,
+            "left": 0,
+            "width": 735,
+            "height": 48,
+            "position": "relative"
+          },
+          "props": {
+            "binding": {
+              "path": "mfcr.summary.year2015[5..50]",
+              "mode": "OneWay"
+            },
+            "startOnNewPage": false,
+            "unbreakable": true
+          },
+          "boxes": [
+            {
+              "name": "ValueBox",
+              "elementName": "Core.ValueBox",
+              "style": {
+                "top": 0,
+                "left": 0,
+                "width": 200,
+                "transform": {}
+              },
+              "props": {
+                "content": {
+                  "path": "dodavatel",
+                  "mode": "OneWay"
+                }
+              }
+            },
+            {
+              "name": "Copy ValueBox",
+              "elementName": "Core.ValueBox",
+              "style": {
+                "top": -2,
+                "left": 223,
+                "width": 300,
+                "transform": {}
+              },
+              "props": {
+                "content": {
+                  "path": "cena",
+                  "mode": "OneWay"
+                }
+              }
+            },
+            {
+              "name": "Copy Copy ValueBox",
+              "elementName": "Core.ValueBox",
+              "style": {
+                "top": 1,
+                "left": 629,
+                "transform": {}
+              },
+              "props": {
+                "content": {
+                  "path": "qt",
+                  "mode": "OneWay"
+                }
+              }
+            }
+          ],
+          "containers": []
+        }
+      ]
+    }
+  ],
+  "data": {},
+  "props": {
+    "defaultData": {
+      "firstName": "karel",
+      "Účel platby": "hotove"
+    },
+    "dataSources": {
+      "model": "http://localhost:3000/model.json",
+      "mfcr": "http://localhost:3000/mfcr.json"
+    },
+    "context": {}
+  }
+}
