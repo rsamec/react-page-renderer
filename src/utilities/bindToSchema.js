@@ -118,7 +118,11 @@ function bindToSchema(clonedSchema,data){
                     traverse(clonedRow).forEach(function (y) {
                         //TODO: simple solution for demonstration purposes
                         if (this.key === "path") {
-                            var rowExpression = getValueArrayPath(binding.path) + "[" + i + "]." + y;
+                            var lastIndex = binding.path.lastIndexOf('[');
+
+                            var arrayPath = lastIndex!==-1?binding.path.substr(0,lastIndex):binding.path;
+                            var rowExpression = arrayPath + "[" + i + "]." + y;
+
                             this.update(rowExpression);
                         }
                     });

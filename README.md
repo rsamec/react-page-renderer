@@ -41,8 +41,46 @@ var React = require('react');
 var HtmlPagesRenderer = require('react-page-renderer').HtmlPagesRenderer;
 var PDFPagesTrigger = require('react-page-renderer').PDFPagesTrigger;
 
-var WidgetFactory = require('react-designer-widgets');
-var widgets = new WidgetFactory().getWidgets();
+//widgets
+import Core from 'react-designer-widgets';
+import Shapes from 'react-shapes';
+import Chart from 'react-pathjs-chart';
+import Griddle from 'griddle-react';
+
+var Widgets = {
+
+    'Core.TextBoxInput': Core.TextBoxInput,
+    'Core.CheckBoxInput': Core.CheckBoxInput,
+    'Core.SelectBoxInput': Core.SelectBoxInput,
+    'Core.JSXBox': Core.JSXBox,
+    'Core.TextBox': Core.TextBox,
+    'Core.ValueBox': Core.ValueBox,
+    'Core.HtmlBox': Core.HtmlBox,
+    'Core.ImageBox': Core.ImageBox,
+    'Core.ImagePanel': Core.ImagePanel,
+    'Core.Flipper': Core.Flipper,
+    'Core.TangleNumberText': Core.TangleNumberText,
+    'Core.TangleBoolText': Core.TangleBoolText,
+
+    'Shapes.Rectangle': Shapes.Rectangle,
+    'Shapes.Ellipse': Shapes.Ellipse,
+    'Shapes.Circle': Shapes.Circle,
+    'Shapes.Line': Shapes.Line,
+    'Shapes.Polyline': Shapes.Polyline,
+    'Shapes.CornerBox': Shapes.CornerBox,
+    'Shapes.Triangle': Shapes.Triangle,
+    'Shapes.Dimension': Shapes.Dimension,
+
+    'Chart.Pie': Chart.Pie,
+    'Chart.Bar': Chart.Bar,
+    'Chart.SmoothLine': Chart.SmoothLine,
+    'Chart.StockLine': Chart.StockLine,
+    'Chart.Scatterplot': Chart.Scatterplot,
+    'Chart.Radar': Chart.Radar,
+    'Chart.Tree': Chart.Tree,
+
+    'react-griddle':Griddle
+};
 
 var App = React.createClass({
 	getInitialState(){
@@ -55,7 +93,7 @@ var App = React.createClass({
 	render: function() {
 		var schema = this.props.schema;
 		return (
-			<HtmlPagesRenderer widgets={widgets} schema={schema} data={this.state.data} pageOptions={{margin:{top:20, left: 20}}} />
+			<HtmlPagesRenderer widgets={Widgets} schema={schema} data={this.state.data} pageOptions={{margin:{top:20, left: 20}}} />
 		)
 	}
 });

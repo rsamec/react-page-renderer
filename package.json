@@ -1,6 +1,6 @@
 {
   "name": "react-page-renderer",
-  "version": "0.0.37",
+  "version": "0.0.38",
   "private": false,
   "description": "My React Component",
   "main": "lib/react-page-renderer.js",
@@ -28,14 +28,17 @@
     "expect.js": "^0.3.1",
     "falcor": "^0.1.13",
     "falcor-http-datasource": "^0.1.2",
+    "griddle-react": "^0.2.14",
     "gulp": "^3.8.10",
     "jasmine": "^2.3.2",
     "react-bootstrap": "^0.22.3",
     "react-component-gulp-tasks": "^0.7.0",
-    "react-designer-widgets": "^0.1.38",
+    "react-designer-widgets": "^0.1.40",
+    "react-joyride": "^0.7.6",
     "react-pathjs-chart": "^0.2.4",
-    "react-shapes": "0.0.3",
-    "superagent": "^1.4.0"
+    "react-shapes": "0.0.6",
+    "superagent": "^1.4.0",
+    "underscore": "^1.8.3"
   },
   "peerDependencies": {},
   "browser": "lib/react-page-renderer.js",
@@ -51,6 +54,7 @@
     "test": "echo \"no tests yet\" && exit 0"
   },
   "keywords": [
-    "react"
+    "react",
+    "react-component"
   ]
 }

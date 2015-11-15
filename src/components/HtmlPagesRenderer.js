@@ -1,14 +1,25 @@
 import React from 'react';
 import HtmlPage from './HtmlPage.js';
+import GraphicPrimitive from '../utilities/graphicUtil.js';
 import WidgetRenderer from './WidgetRenderer.js';
 import transformToPages from '../utilities/transformToPages';
 
 var HtmlPagesRenderer = React.createClass({
 
 	render: function () {
-		var pages = transformToPages(this.props.schema);
+		var pageOptions =this.props.pageOptions || {};
+		var pageHeight = pageOptions.height || GraphicPrimitive.DefaultPageSize[1];
+		var pageMargin = pageOptions.margin || {};
+		if (pageMargin.top !== undefined) pageHeight -=pageMargin.top;
+		if (pageMargin.bottom !== undefined) pageHeight -=pageMargin.bottom;
+
+		var pages = transformToPages(this.props.schema,GraphicPrimitive.pointToPixel(pageHeight));
 		var ctx = (this.props.schema.props && this.props.schema.props.context) || {};
 		var customStyles = ctx['styles'] || {};
+		var code = ctx['code'] && ctx['code'].code;
+		var customCode = !!code? new Function(code)():undefined;
+
+
 		return (
 			<div id="section-to-print" style={this.props.style}>
 				{pages.map(function (page, i) {
@@ -18,11 +29,12 @@ var HtmlPagesRenderer = React.createClass({
 							var elName = node.element.elementName;
 							var widget = <WidgetRenderer key={'page' + i + '_' + j} widget={this.props.widgets[elName]} node={node.element}
 														 customStyle={customStyles[elName]}
+														 customCode={customCode}
 														 dataBinder={this.props.dataContext}
 														 onFetch={this.props.onFetch}/>;
 							return (
 								<div style={ node.style}>
-									{widget}
+									<div id={node.element.name}>{widget}</div>
 								</div>
 							);
 						}, this)}

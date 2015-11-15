@@ -47,7 +47,8 @@ var HtmlPage = React.createClass({
 			border: (options && options.border) || 'gray 1px solid',
 			backgroundColor: '#ffffff'
 		};
-
+		//console.log("InnerStyle: " + JSON.stringify(pageInnerStyle,null,2));
+		//console.log("PageStyle: " +  JSON.stringify(pageStyle,null,2));
 
 		return (
 			<div>

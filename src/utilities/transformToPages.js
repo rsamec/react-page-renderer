@@ -26,16 +26,16 @@ var generateCssTransform = function(transform) {
 
     return cssTransform
 };
-function transformToPages(clonedSchema){
+function transformToPages(clonedSchema,pageHeight){
 
     const CONTAINER_NAME = "Container";
     const REPEATER_CONTAINER_NAME = "Repeater";
     const BOXES_COLLECTION_NAME = "boxes";
-
+    const DEFAULT_PAGE_HEIGHT = 1065;
 
 
     //step -> transform relative positions to absolute positions
-	var pageHeight = 1065;
+	if (pageHeight === undefined) pageHeight = DEFAULT_PAGE_HEIGHT;
     var globalTop = 0;
     var trav = function(node){
 
@@ -126,11 +126,14 @@ function transformToPages(clonedSchema){
                 //decrease top according the pages
                 if (pages.length > 1){ top -= (pages.length -1) * pageHeight };
 
-                var style = {'left':left,'top':top,'height': height,'width': width, 'position':'absolute'};
+                var style = {'left':left,'top':top,'position':'absolute'};
                 if (el.style.width!== undefined) style.width = el.style.width;
                 if (el.style.height!== undefined) style.height = el.style.height;
                 if (el.style.zIndex!== undefined) style.zIndex = el.style.zIndex;
 
+                //propagate width and height to widget props
+                if (!el.props.width && !!el.style.width) el.props.width = el.style.width;
+                if (!el.props.height&& !!el.style.height) el.props.height = el.style.height;
 
                 if (el.style.transform !== undefined) {
                     style.WebkitTransform = generateCssTransform(el.style.transform);

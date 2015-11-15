@@ -5,9 +5,11 @@ class GraphicPrimitive {
 	static get DPI() {return 96;}
 	
 	static pointToPixel (point) {
-		return (point / 72) * GraphicPrimitive.DPI;
+		if (point === undefined) return;
+		var convertedPoint =(point / 72) * GraphicPrimitive.DPI;
+		return convertedPoint.toFixed(3);
 	};
-	
+
 	//default margin for A4 format
 	static get DefaultMargin() {return 21.6;}
 
@@ -16,6 +18,8 @@ class GraphicPrimitive {
 	
 	//get page size for A4 format in pixels
 	static get DefaultPageSizeInPx() { return [GraphicPrimitive.pointToPixel(standardPageSizes.A4[0]), GraphicPrimitive.pointToPixel(standardPageSizes.A4[1])];}
+
+	static get PageSizes() {return standardPageSizes;}
 };
 
 export default GraphicPrimitive
