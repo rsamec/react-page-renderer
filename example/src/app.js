@@ -255,12 +255,14 @@ var App = React.createClass({
 
         var contentType = 'image/' + type;
         if (type === "pdf") contentType = 'application/pdf';
+        //var url = 'http://render-pergamon.rhcloud.com';
         var url = 'http://localhost:8080';
         //var name = this.context.router.getCurrentParams().name;
 
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
         xmlhttp.open("POST", url + '/' + type);
 
+        //xmlhttp.setRequestHeader("Access-Control-Allow-Origin", "*");
         xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         xmlhttp.responseType = 'arraybuffer';
 
@@ -320,6 +322,7 @@ var App = React.createClass({
                     </Nav>
                     <Nav navbar right>
                         <NavItem eventKey={1} onClick={()=>{this.generate("pdf")}}><span className="glyphicon glyphicon-print" title="generate pdf"></span></NavItem>
+                        <NavItem eventKey={1} onClick={()=>{this.generate("png")}}><span className="glyphicon glyphicon-export" title="generate png"></span></NavItem>
                         <NavItem eventKey={2} onClick={()=>{this.restartGuide()}}><span className="glyphicon glyphicon-play-circle" title="restart guide"></span></NavItem>
                         <li className="dropdown">
                             <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">

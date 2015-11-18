@@ -13,7 +13,8 @@ var HtmlPagesRenderer = React.createClass({
 		if (pageMargin.top !== undefined) pageHeight -=pageMargin.top;
 		if (pageMargin.bottom !== undefined) pageHeight -=pageMargin.bottom;
 
-		var pages = transformToPages(this.props.schema,GraphicPrimitive.pointToPixel(pageHeight));
+		var pages = this.props.pages;
+		if (pages === undefined) pages = transformToPages(this.props.schema,GraphicPrimitive.pointToPixel(pageHeight));
 		var ctx = (this.props.schema.props && this.props.schema.props.context) || {};
 		var customStyles = ctx['styles'] || {};
 		var code = ctx['code'] && ctx['code'].code;

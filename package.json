@@ -1,6 +1,6 @@
 {
   "name": "react-page-renderer",
-  "version": "0.0.38",
+  "version": "0.0.40",
   "private": false,
   "description": "My React Component",
   "main": "lib/react-page-renderer.js",
@@ -33,7 +33,7 @@
     "jasmine": "^2.3.2",
     "react-bootstrap": "^0.22.3",
     "react-component-gulp-tasks": "^0.7.0",
-    "react-designer-widgets": "^0.1.40",
+    "react-designer-widgets": "^0.1.43",
     "react-joyride": "^0.7.6",
     "react-pathjs-chart": "^0.2.4",
     "react-shapes": "0.0.6",

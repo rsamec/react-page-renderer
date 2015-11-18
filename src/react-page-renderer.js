@@ -4,7 +4,8 @@ var WidgetRenderer = require('./components/WidgetRenderer');
 var GraphicUtil = require('./utilities/graphicUtil');
 var BindingUtil  = {
 	bindToSchema: require('./utilities/bindToSchema'),
-	bindToSchemaAsync:require('./utilities/bindToSchemaAsync')
+	bindToSchemaAsync:require('./utilities/bindToSchemaAsync'),
+	getPages:require('./utilities/getPages')
 }
 
 export default {
