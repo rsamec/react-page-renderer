@@ -5,6 +5,7 @@ import _ from 'lodash';
 import request from 'superagent';
 import falcor from 'falcor';
 import falcorDataSource from 'falcor-http-datasource';
+import Transmit from 'react-transmit';
 var joyride = require('react-joyride').Mixin;
 
 //widgets
@@ -255,8 +256,8 @@ var App = React.createClass({
 
         var contentType = 'image/' + type;
         if (type === "pdf") contentType = 'application/pdf';
-        //var url = 'http://render-pergamon.rhcloud.com';
-        var url = 'http://localhost:8080';
+        var url = 'http://render-pergamon.rhcloud.com';
+        //var url = 'http://localhost:8080';
         //var name = this.context.router.getCurrentParams().name;
 
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
@@ -353,10 +354,10 @@ var App = React.createClass({
 
                     {!this.state.book ? <HtmlPagesRenderer widgets={Widgets} schema={schema} data={this.state.data}
                                                            dataContext={dataContext}
-                                                           pageOptions={pageOptions}/> : null}
+                                                           pageOptions={pageOptions} asyncRenderer={Transmit} /> : null}
                     {this.state.book ? <HtmlBookRenderer widgets={Widgets} schema={schema} data={this.state.data}
                                                          dataContext={dataContext}
-                                                         pageOptions={pageOptions}/> : null}
+                                                         pageOptions={pageOptions} asyncRenderer={Transmit} /> : null}
                 </div>
             </div>
         )

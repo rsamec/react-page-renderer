@@ -1,7 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
 import BindToMixin from 'react-binding';
-import Transmit from 'react-transmit';
 import {getValueSync} from '../utilities/falcorPathUtil.js';
 
 var WidgetRenderer = React.createClass({
@@ -119,6 +118,7 @@ var WidgetRenderer = React.createClass({
 	},
 	render(){
 		const {designer} = this.props;
+		var asyncRenderer = this.props.asyncRenderer;
 		var box = this.props.node;
 		var widget  = this.props.widget;
 		if (widget === undefined) {
@@ -138,7 +138,7 @@ var WidgetRenderer = React.createClass({
 		var fragments;
 		if (this.props.dataBinder !== undefined) fragments=this.applyBinding(props,this.props.dataBinder,this.bindTo(this.props.dataBinder, "dataSources").value);
 
-		if (designer !==true && _.keys(fragments).length !==0) widget = Transmit.createContainer(widget,{fragments: fragments});
+		if (asyncRenderer !== undefined && designer !==true && _.keys(fragments).length !==0) widget = asyncRenderer.createContainer(widget,{fragments: fragments});
 		return React.createElement(widget, props, props.content !== undefined ? React.DOM.div({dangerouslySetInnerHTML: {__html: props.content}}) : null);
 
 

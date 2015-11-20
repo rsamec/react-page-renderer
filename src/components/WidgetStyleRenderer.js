@@ -16,7 +16,7 @@ export default class WidgetStyleRenderer extends React.Component {
         var widgetStyle = _.cloneDeep(widget.metaData && widget.metaData.props || {});
         if (customStyle !== undefined) widgetStyle = _.merge(widgetStyle, customStyle);
         var props = _.merge(widgetStyle,widgetProps);
-        console.log(props);
+
 
         return React.createElement(widget, props, props.content !== undefined ? React.DOM.div({dangerouslySetInnerHTML: {__html: props.content}}) : null);
     }

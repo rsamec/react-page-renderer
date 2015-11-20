@@ -1,6 +1,6 @@
 {
   "name": "react-page-renderer",
-  "version": "0.0.40",
+  "version": "0.0.41",
   "private": false,
   "description": "My React Component",
   "main": "lib/react-page-renderer.js",
@@ -22,7 +22,6 @@
     "q": "^1.4.1",
     "react": "^0.13.3",
     "react-binding": "^0.6.4",
-    "react-transmit": "^3.0.7",
     "reactify": "^1.1.1",
     "traverse": "^0.6.6"
   },
@@ -38,7 +37,8 @@
     "react-pathjs-chart": "^0.2.4",
     "react-shapes": "0.0.6",
     "superagent": "^1.4.0",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "react-transmit": "^3.0.8"
   },
   "peerDependencies": {},
   "browser": "lib/react-page-renderer.js",

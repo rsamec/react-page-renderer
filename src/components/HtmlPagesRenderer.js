@@ -32,6 +32,7 @@ var HtmlPagesRenderer = React.createClass({
 														 customStyle={customStyles[elName]}
 														 customCode={customCode}
 														 dataBinder={this.props.dataContext}
+														 asyncRenderer ={ this.props.asyncRenderer}
 														 onFetch={this.props.onFetch}/>;
 							return (
 								<div style={ node.style}>
