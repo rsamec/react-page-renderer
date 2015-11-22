@@ -24,6 +24,7 @@ var Widgets = {
     'Core.ValueBox': Core.ValueBox,
     'Core.HtmlBox': Core.HtmlBox,
     'Core.ImageBox': Core.ImageBox,
+    'Core.ImageCarousel': Core.ImageCarousel,
     'Core.ImagePanel': Core.ImagePanel,
     'Core.Flipper': Core.Flipper,
     'Core.TangleNumberText': Core.TangleNumberText,
@@ -216,15 +217,15 @@ var App = React.createClass({
     },
 
     restartGuide(){
-        var schema = this.state.schema;
-        var tour = schema.props.tour;
-        if (tour !== undefined && _.isArray(tour) && tour.length !==0) {
-            this.joyrideReplaceSteps(tour,true);
-            this.joyrideStart()
-        }
-        else{
-            this.joyrideReplaceSteps([]);
-        }
+        //var schema = this.state.schema;
+        //var tour = schema.props.tour;
+        //if (tour !== undefined && _.isArray(tour) && tour.length !==0) {
+        //    this.joyrideReplaceSteps(tour,true);
+        //    this.joyrideStart()
+        //}
+        //else{
+        //    this.joyrideReplaceSteps([]);
+        //}
     },
     componentWillMount: function () {
         this.joyrideSetOptions({
@@ -302,7 +303,9 @@ var App = React.createClass({
                             </a>
                             <ul className="dropdown-menu">
                                 <li><a onClick={()=>{this.loadSchema('bikery.json')}}>Bike biomechanic</a></li>
-                                <li><a onClick={()=>{this.loadSchema('joyRide.json')}}>Simple Bootstrap guide</a></li>
+                                <li><a onClick={()=>{this.loadSchema('DesignerWhitePaper.json')}}>React designer</a></li>
+                                <li><a onClick={()=>{this.loadSchema('Flowers.json')}}>Flowers</a></li>
+                                <li><a onClick={()=>{this.loadSchema('Tasks.json')}}>Tasks</a></li>
                             </ul>
                         </li>
                         <li className="dropdown">
@@ -315,7 +318,7 @@ var App = React.createClass({
                                 <li><a onClick={()=>{this.loadSchema('Lists.json')}}>Lists</a></li>
                                 <li><a onClick={()=>{this.loadSchema('TextColumns.json')}}>Multiple columns</a></li>
                                 <li role="separator" className="divider"></li>
-                                <li><a onClick={()=>{this.loadSchema('TextColumns.json')}}>Mixed texts</a></li>
+                                <li><a onClick={()=>{this.loadSchema('Contracty.json')}}>Mixed texts</a></li>
                             </ul>
                         </li>
                         <NavItem eventKey={1} onClick={() => this.loadSchema('Charts_pages.json')}>Charts</NavItem>
@@ -323,8 +326,7 @@ var App = React.createClass({
                     </Nav>
                     <Nav navbar right>
                         <NavItem eventKey={1} onClick={()=>{this.generate("pdf")}}><span className="glyphicon glyphicon-print" title="generate pdf"></span></NavItem>
-                        <NavItem eventKey={1} onClick={()=>{this.generate("png")}}><span className="glyphicon glyphicon-export" title="generate png"></span></NavItem>
-                        <NavItem eventKey={2} onClick={()=>{this.restartGuide()}}><span className="glyphicon glyphicon-play-circle" title="restart guide"></span></NavItem>
+                        <NavItem eventKey={3} onClick={()=>{this.restartGuide()}}><span className="glyphicon glyphicon-play-circle" title="start guide"></span></NavItem>
                         <li className="dropdown">
                             <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                 <span>Page size</span>

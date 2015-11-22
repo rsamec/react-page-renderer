@@ -1,6 +1,6 @@
 {
   "name": "react-page-renderer",
-  "version": "0.0.41",
+  "version": "0.0.43",
   "private": false,
   "description": "My React Component",
   "main": "lib/react-page-renderer.js",
@@ -54,7 +54,6 @@
     "test": "echo \"no tests yet\" && exit 0"
   },
   "keywords": [
-    "react",
-    "react-component"
+    "react"
   ]
 }

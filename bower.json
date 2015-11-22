@@ -1,7 +1,7 @@
 {
   "name": "my-component",
   "main": "dist/my-component.min.js",
-  "version": "0.0.41",
+  "version": "0.0.43",
   "homepage": "https://github.com/JedWatson/react-input-autosize",
   "authors": [
     "Jed Watson"
@@ -27,6 +27,7 @@
     "test"
   ],
   "dependencies": {
-    "jquery": "~2.1.4"
+    "jquery": "~2.1.4",
+    "slick-carousel": "~1.5.8"
   }
 }
