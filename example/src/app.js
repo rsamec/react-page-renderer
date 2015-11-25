@@ -121,6 +121,36 @@ _.extend(Widgets['react-bootstrap.Input'], {
         settings:bootstrapSettings
     }
 });
+_.extend(Widgets['react-griddle'], {
+    metaData: {
+        props: {
+            results: undefined,
+            columns:undefined,
+            columnMetadata:undefined,
+            noDataMessage:undefined,
+            resultsPerPage:undefined,
+            showSettings:false,
+            showFilter:false,
+            showPager:true,
+            showTableHeading:true
+
+        },
+        settings: {
+            fields:{
+                //content:{type:'string'},
+                results:{type:'bindingEditor'},
+                showSettings:{type:'boolean'},
+                showFilter:{type:'boolean'},
+                showTableHeading:{type:'boolean'},
+                showPager:{type:'boolean'},
+                columnMetadata:{type:'plainJsonEditor'},
+                columns:{type:'jsonEditor'},
+                resultsPerPage:{type:'number'}
+
+            }
+        }
+    }
+});
 
 //var nameStore = new DataStore();
 
@@ -187,7 +217,7 @@ var App = React.createClass({
     },
 
     componentDidMount() {
-        this.loadSchema('bikery.json');
+        this.loadSchema('Tasks.json');
     },
     loadSchema(schemaName){
         request.get(schemaName)
@@ -197,7 +227,10 @@ var App = React.createClass({
                     var schema = res.body;
 
                     var dataSources = _.reduce(schema.props.dataSources, function (memo, value, key) {
-                        memo[key] = new falcor.Model({source: new falcorDataSource(value)});
+                        memo[key] = new falcor.Model({source: new falcorDataSource(value,{
+                            crossDomain: true,
+                            withCredentials: false
+                        })});
                         return memo;
                     }, {});
 
@@ -306,6 +339,8 @@ var App = React.createClass({
                                 <li><a onClick={()=>{this.loadSchema('DesignerWhitePaper.json')}}>React designer</a></li>
                                 <li><a onClick={()=>{this.loadSchema('Flowers.json')}}>Flowers</a></li>
                                 <li><a onClick={()=>{this.loadSchema('Tasks.json')}}>Tasks</a></li>
+                                <li><a onClick={()=>{this.loadSchema('Orders.json')}}>Orders</a></li>
+                                <li><a onClick={()=>{this.loadSchema('Invoice.json')}}>Invoices</a></li>
                             </ul>
                         </li>
                         <li className="dropdown">
@@ -322,10 +357,19 @@ var App = React.createClass({
                             </ul>
                         </li>
                         <NavItem eventKey={1} onClick={() => this.loadSchema('Charts_pages.json')}>Charts</NavItem>
-                        <NavItem eventKey={2} onClick={() => this.loadSchema('Images.json')}>Images</NavItem>
+                        <li className="dropdown">
+                            <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <span>Images</span>
+                            </a>
+                            <ul className="dropdown-menu">
+                                <li><a onClick={()=>{this.loadSchema('Images.json')}}>Images</a></li>
+                                <li><a onClick={()=>{this.loadSchema('ImageGallery.json')}}>Image gallery</a></li>
+                            </ul>
+                        </li>
                     </Nav>
                     <Nav navbar right>
                         <NavItem eventKey={1} onClick={()=>{this.generate("pdf")}}><span className="glyphicon glyphicon-print" title="generate pdf"></span></NavItem>
+                        <NavItem eventKey={1} onClick={()=>{this.generate("png")}}><span className="glyphicon glyphicon-export" title="generate pdf"></span></NavItem>
                         <NavItem eventKey={3} onClick={()=>{this.restartGuide()}}><span className="glyphicon glyphicon-play-circle" title="start guide"></span></NavItem>
                         <li className="dropdown">
                             <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
