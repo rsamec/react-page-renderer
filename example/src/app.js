@@ -217,7 +217,7 @@ var App = React.createClass({
     },
 
     componentDidMount() {
-        this.loadSchema('Tasks.json');
+        this.loadSchema('DesignerWhitePaper.json');
     },
     loadSchema(schemaName){
         request.get(schemaName)
@@ -328,19 +328,20 @@ var App = React.createClass({
         var formats = _.range(0,10);
         return (
             <div>
-                <Navbar toggleNavKey={0}>
-                    <Nav navbar>
+                <Navbar toggleNavKey={0} fixedTop={true} fluid={true} >
+                    <a className="navbar-brand"  href="#">RS Solution</a>
+                    <Nav navbar >
                         <li className="dropdown">
                             <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                 <span>Guides</span>
                             </a>
                             <ul className="dropdown-menu">
+                                <li><a onClick={()=>{this.loadSchema('DesignerWhitePaper.json')}}>Designer tutorial</a></li>
                                 <li><a onClick={()=>{this.loadSchema('bikery.json')}}>Bike biomechanic</a></li>
-                                <li><a onClick={()=>{this.loadSchema('DesignerWhitePaper.json')}}>React designer</a></li>
-                                <li><a onClick={()=>{this.loadSchema('Flowers.json')}}>Flowers</a></li>
-                                <li><a onClick={()=>{this.loadSchema('Tasks.json')}}>Tasks</a></li>
-                                <li><a onClick={()=>{this.loadSchema('Orders.json')}}>Orders</a></li>
-                                <li><a onClick={()=>{this.loadSchema('Invoice.json')}}>Invoices</a></li>
+                                <li><a onClick={()=>{this.loadSchema('Flowers.json')}}>Flowers leaflet</a></li>
+                                <li><a onClick={()=>{this.loadSchema('Tasks.json')}}>External task</a></li>
+                                <li><a onClick={()=>{this.loadSchema('Orders.json')}}>Business orders</a></li>
+                                <li><a onClick={()=>{this.loadSchema('Invoice.json')}}>Invoice example</a></li>
                             </ul>
                         </li>
                         <li className="dropdown">
@@ -349,11 +350,11 @@ var App = React.createClass({
                             </a>
                             <ul className="dropdown-menu">
                                 <li><a onClick={()=>{this.loadSchema('TextFormats.json')}}>Formats</a></li>
-                                <li><a onClick={()=>{this.loadSchema('repeatPara.json')}}>Paragraphs</a></li>
-                                <li><a onClick={()=>{this.loadSchema('Lists.json')}}>Lists</a></li>
+                                <li><a onClick={()=>{this.loadSchema('TextParagraph.json')}}>Paragraphs</a></li>
+                                <li><a onClick={()=>{this.loadSchema('TextList.json')}}>Lists</a></li>
                                 <li><a onClick={()=>{this.loadSchema('TextColumns.json')}}>Multiple columns</a></li>
                                 <li role="separator" className="divider"></li>
-                                <li><a onClick={()=>{this.loadSchema('Contracty.json')}}>Mixed texts</a></li>
+                                <li><a onClick={()=>{this.loadSchema('Contract.json')}}>Contract</a></li>
                             </ul>
                         </li>
                         <NavItem eventKey={1} onClick={() => this.loadSchema('Charts_pages.json')}>Charts</NavItem>
@@ -369,8 +370,12 @@ var App = React.createClass({
                     </Nav>
                     <Nav navbar right>
                         <NavItem eventKey={1} onClick={()=>{this.generate("pdf")}}><span className="glyphicon glyphicon-print" title="generate pdf"></span></NavItem>
-                        <NavItem eventKey={1} onClick={()=>{this.generate("png")}}><span className="glyphicon glyphicon-export" title="generate pdf"></span></NavItem>
-                        <NavItem eventKey={3} onClick={()=>{this.restartGuide()}}><span className="glyphicon glyphicon-play-circle" title="start guide"></span></NavItem>
+                        {
+                            /*
+                             <NavItem eventKey={2} onClick={()=>{this.generate("png")}}><span className="glyphicon glyphicon-export" title="generate pdf"></span></NavItem>
+                             <NavItem eventKey={3} onClick={()=>{this.restartGuide()}}><span className="glyphicon glyphicon-play-circle" title="start guide"></span></NavItem>
+                             */
+                        }
                         <li className="dropdown">
                             <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                 <span>Page size</span>
@@ -392,6 +397,12 @@ var App = React.createClass({
                                 <li><a onClick={()=>{this.setState({book:false})}}>Page sequence</a></li>
                                 <li><a onClick={()=>{this.setState({book:true})}}>Book viewer</a></li>
                             </ul>
+                        </li>
+                        <li>
+                            <div style={{minWidth:160}}></div>
+                            <a href="https://github.com/rsamec/react-page-renderer">
+                                <img style={{position:'absolute', top: 0, right: 0, border: 0,width:100}}  src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"/>
+                            </a>
                         </li>
                     </Nav>
                 </Navbar>
