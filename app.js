@@ -160,6 +160,36 @@ _lodash2['default'].extend(Widgets['react-bootstrap.Input'], {
         settings: bootstrapSettings
     }
 });
+_lodash2['default'].extend(Widgets['react-griddle'], {
+    metaData: {
+        props: {
+            results: undefined,
+            columns: undefined,
+            columnMetadata: undefined,
+            noDataMessage: undefined,
+            resultsPerPage: undefined,
+            showSettings: false,
+            showFilter: false,
+            showPager: true,
+            showTableHeading: true
+
+        },
+        settings: {
+            fields: {
+                //content:{type:'string'},
+                results: { type: 'bindingEditor' },
+                showSettings: { type: 'boolean' },
+                showFilter: { type: 'boolean' },
+                showTableHeading: { type: 'boolean' },
+                showPager: { type: 'boolean' },
+                columnMetadata: { type: 'plainJsonEditor' },
+                columns: { type: 'jsonEditor' },
+                resultsPerPage: { type: 'number' }
+
+            }
+        }
+    }
+});
 
 //var nameStore = new DataStore();
 
@@ -224,7 +254,7 @@ var App = _react2['default'].createClass({
     },
 
     componentDidMount: function componentDidMount() {
-        this.loadSchema('bikery.json');
+        this.loadSchema('DesignerWhitePaper.json');
     },
     loadSchema: function loadSchema(schemaName) {
         _superagent2['default'].get(schemaName).end((function (err, res) {
@@ -233,7 +263,10 @@ var App = _react2['default'].createClass({
                 var schema = res.body;
 
                 var dataSources = _lodash2['default'].reduce(schema.props.dataSources, function (memo, value, key) {
-                    memo[key] = new _falcor2['default'].Model({ source: new _falcorHttpDatasource2['default'](value) });
+                    memo[key] = new _falcor2['default'].Model({ source: new _falcorHttpDatasource2['default'](value, {
+                            crossDomain: true,
+                            withCredentials: false
+                        }) });
                     return memo;
                 }, {});
 
@@ -336,7 +369,12 @@ var App = _react2['default'].createClass({
             null,
             _react2['default'].createElement(
                 _reactBootstrap.Navbar,
-                { toggleNavKey: 0 },
+                { toggleNavKey: 0, fixedTop: true, fluid: true },
+                _react2['default'].createElement(
+                    'a',
+                    { className: 'navbar-brand', href: '#' },
+                    'RS Solution'
+                ),
                 _react2['default'].createElement(
                     _reactBootstrap.Nav,
                     { navbar: true },
@@ -361,6 +399,17 @@ var App = _react2['default'].createClass({
                                 _react2['default'].createElement(
                                     'a',
                                     { onClick: function () {
+                                            _this.loadSchema('DesignerWhitePaper.json');
+                                        } },
+                                    'Designer tutorial'
+                                )
+                            ),
+                            _react2['default'].createElement(
+                                'li',
+                                null,
+                                _react2['default'].createElement(
+                                    'a',
+                                    { onClick: function () {
                                             _this.loadSchema('bikery.json');
                                         } },
                                     'Bike biomechanic'
@@ -372,20 +421,9 @@ var App = _react2['default'].createClass({
                                 _react2['default'].createElement(
                                     'a',
                                     { onClick: function () {
-                                            _this.loadSchema('DesignerWhitePaper.json');
-                                        } },
-                                    'React designer'
-                                )
-                            ),
-                            _react2['default'].createElement(
-                                'li',
-                                null,
-                                _react2['default'].createElement(
-                                    'a',
-                                    { onClick: function () {
                                             _this.loadSchema('Flowers.json');
                                         } },
-                                    'Flowers'
+                                    'Flowers leaflet'
                                 )
                             ),
                             _react2['default'].createElement(
@@ -396,7 +434,29 @@ var App = _react2['default'].createClass({
                                     { onClick: function () {
                                             _this.loadSchema('Tasks.json');
                                         } },
-                                    'Tasks'
+                                    'External task'
+                                )
+                            ),
+                            _react2['default'].createElement(
+                                'li',
+                                null,
+                                _react2['default'].createElement(
+                                    'a',
+                                    { onClick: function () {
+                                            _this.loadSchema('Orders.json');
+                                        } },
+                                    'Business orders'
+                                )
+                            ),
+                            _react2['default'].createElement(
+                                'li',
+                                null,
+                                _react2['default'].createElement(
+                                    'a',
+                                    { onClick: function () {
+                                            _this.loadSchema('Invoice.json');
+                                        } },
+                                    'Invoice example'
                                 )
                             )
                         )
@@ -433,7 +493,7 @@ var App = _react2['default'].createClass({
                                 _react2['default'].createElement(
                                     'a',
                                     { onClick: function () {
-                                            _this.loadSchema('repeatPara.json');
+                                            _this.loadSchema('TextParagraph.json');
                                         } },
                                     'Paragraphs'
                                 )
@@ -444,7 +504,7 @@ var App = _react2['default'].createClass({
                                 _react2['default'].createElement(
                                     'a',
                                     { onClick: function () {
-                                            _this.loadSchema('Lists.json');
+                                            _this.loadSchema('TextList.json');
                                         } },
                                     'Lists'
                                 )
@@ -467,9 +527,9 @@ var App = _react2['default'].createClass({
                                 _react2['default'].createElement(
                                     'a',
                                     { onClick: function () {
-                                            _this.loadSchema('Contracty.json');
+                                            _this.loadSchema('Contract.json');
                                         } },
-                                    'Mixed texts'
+                                    'Contract'
                                 )
                             )
                         )
@@ -482,11 +542,43 @@ var App = _react2['default'].createClass({
                         'Charts'
                     ),
                     _react2['default'].createElement(
-                        _reactBootstrap.NavItem,
-                        { eventKey: 2, onClick: function () {
-                                return _this.loadSchema('Images.json');
-                            } },
-                        'Images'
+                        'li',
+                        { className: 'dropdown' },
+                        _react2['default'].createElement(
+                            'a',
+                            { href: '#', className: 'dropdown-toggle', 'data-toggle': 'dropdown', role: 'button', 'aria-haspopup': 'true', 'aria-expanded': 'false' },
+                            _react2['default'].createElement(
+                                'span',
+                                null,
+                                'Images'
+                            )
+                        ),
+                        _react2['default'].createElement(
+                            'ul',
+                            { className: 'dropdown-menu' },
+                            _react2['default'].createElement(
+                                'li',
+                                null,
+                                _react2['default'].createElement(
+                                    'a',
+                                    { onClick: function () {
+                                            _this.loadSchema('Images.json');
+                                        } },
+                                    'Images'
+                                )
+                            ),
+                            _react2['default'].createElement(
+                                'li',
+                                null,
+                                _react2['default'].createElement(
+                                    'a',
+                                    { onClick: function () {
+                                            _this.loadSchema('ImageGallery.json');
+                                        } },
+                                    'Image gallery'
+                                )
+                            )
+                        )
                     )
                 ),
                 _react2['default'].createElement(
@@ -498,13 +590,6 @@ var App = _react2['default'].createClass({
                                 _this.generate("pdf");
                             } },
                         _react2['default'].createElement('span', { className: 'glyphicon glyphicon-print', title: 'generate pdf' })
-                    ),
-                    _react2['default'].createElement(
-                        _reactBootstrap.NavItem,
-                        { eventKey: 3, onClick: function () {
-                                _this.restartGuide();
-                            } },
-                        _react2['default'].createElement('span', { className: 'glyphicon glyphicon-play-circle', title: 'start guide' })
                     ),
                     _react2['default'].createElement(
                         'li',
@@ -592,6 +677,16 @@ var App = _react2['default'].createClass({
                                 )
                             )
                         )
+                    ),
+                    _react2['default'].createElement(
+                        'li',
+                        null,
+                        _react2['default'].createElement('div', { style: { minWidth: 160 } }),
+                        _react2['default'].createElement(
+                            'a',
+                            { href: 'https://github.com/rsamec/react-page-renderer' },
+                            _react2['default'].createElement('img', { style: { position: 'absolute', top: 0, right: 0, border: 0, width: 100 }, src: 'https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67', alt: 'Fork me on GitHub', 'data-canonical-src': 'https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png' })
+                        )
                     )
                 )
             ),
@@ -610,6 +705,11 @@ var App = _react2['default'].createClass({
 });
 
 _react2['default'].render(_react2['default'].createElement(App, null), document.getElementById('app'));
+
+/*
+ <NavItem eventKey={2} onClick={()=>{this.generate("png")}}><span className="glyphicon glyphicon-export" title="generate pdf"></span></NavItem>
+ <NavItem eventKey={3} onClick={()=>{this.restartGuide()}}><span className="glyphicon glyphicon-play-circle" title="start guide"></span></NavItem>
+ */
 
 
 },{"falcor":undefined,"falcor-http-datasource":undefined,"griddle-react":14,"lodash":undefined,"react":undefined,"react-binding":undefined,"react-bootstrap":72,"react-designer-widgets":86,"react-joyride":134,"react-page-renderer":undefined,"react-pathjs-chart":141,"react-shapes":181,"react-transmit":343,"superagent":520}],2:[function(require,module,exports){
