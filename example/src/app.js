@@ -155,7 +155,7 @@ _.extend(Widgets['react-griddle'], {
 //var nameStore = new DataStore();
 
 var iterate = function (current, fce) {
-    var children = current.containers;
+    var children = current.containers || [];
 
     //iterate through containers
     var containers = [];
@@ -225,8 +225,8 @@ var App = React.createClass({
                 if (res.ok && !!res.body) {
 
                     var schema = res.body;
-
-                    var dataSources = _.reduce(schema.props.dataSources, function (memo, value, key) {
+                    var schemaProps = schema.props || {};
+                    var dataSources = _.reduce(schemaProps.dataSources, function (memo, value, key) {
                         memo[key] = new falcor.Model({source: new falcorDataSource(value,{
                             crossDomain: true,
                             withCredentials: false
@@ -236,11 +236,11 @@ var App = React.createClass({
 
                     this.setState({
                         schema: schema,
-                        data: _.extend({dataSources: dataSources}, schema.props.defaultData || {}),
-                        format: schema.props.defaultPageSize || 'A4'
+                        data: _.extend({dataSources: dataSources}, schemaProps.defaultData || {}),
+                        format: schemaProps.defaultPageSize || 'A4'
                     });
                     this.bindToRepeater(schema, dataSources);
-                    this.restartGuide(schema.props.tour);
+                    this.restartGuide(schemaProps.tour);
 
 
                 } else {

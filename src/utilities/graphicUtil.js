@@ -7,7 +7,8 @@ class GraphicPrimitive {
 	static pointToPixel (point) {
 		if (point === undefined) return;
 		var convertedPoint =(point / 72) * GraphicPrimitive.DPI;
-		return convertedPoint.toFixed(3);
+		return Math.round(convertedPoint,3);
+		//return parseFloat(convertedPoint.toFixed(3));
 	};
 
 	//default margin for A4 format

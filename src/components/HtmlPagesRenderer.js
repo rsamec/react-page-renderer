@@ -20,11 +20,11 @@ var HtmlPagesRenderer = React.createClass({
 		var code = ctx['code'] && ctx['code'].code;
 		var customCode = !!code? new Function(code)():undefined;
 
-
+		var pageBackground = (this.props.schema.props && this.props.schema.props.background) || {};
 		return (
 			<div id="section-to-print" style={this.props.style}>
 				{pages.map(function (page, i) {
-					return (<HtmlPage key={'page' + i} pageNumber={page.pageNumber} widgets={this.props.widgets}
+					return (<HtmlPage key={'page' + i} pageNumber={page.pageNumber} widgets={this.props.widgets} background={pageBackground}
 									  errorFlag={this.props.errorFlag} pageOptions={this.props.pageOptions}>
 						{page.boxes.map(function (node, j) {
 							var elName = node.element.elementName;

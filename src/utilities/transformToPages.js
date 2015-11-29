@@ -39,8 +39,9 @@ function transformToPages(clonedSchema,pageHeight){
     var globalTop = 0;
     var trav = function(node){
 
-		var props = node.props;
         if (node === undefined) return 0;
+
+        var props = node.props || {};
 
         //grap height and top properties
         var nodeHeight = (node.style === undefined)?0:parseInt(node.style.height, 10);
@@ -49,7 +50,7 @@ function transformToPages(clonedSchema,pageHeight){
         if (isNaN(nodeTop)) nodeTop = 0;
 
 
-        var children = node.containers;
+        var children = node.containers || [];
         var computedHeight = 0;
         if (children === undefined) return computedHeight;
         var childrenHeight = 0;
@@ -103,13 +104,13 @@ function transformToPages(clonedSchema,pageHeight){
 				var elLeft = el.style.left && parseInt(el.style.left,10) || 0;
 				
                 //grab parent positions
-                var top = parseInt(parent.style.top,10) + elTop;
-                var left = parseInt(parent.style.left,10) + elLeft;
+                var top = (parent.style.top && parseInt(parent.style.top,10) || 0) + elTop;
+                var left = (parent.style.left && parseInt(parent.style.left,10) || 0) + elLeft;
 
                 //grab parent dimensions
                 //TODO: !!!! temporarily - container width simulates boxes width
-                var height = parseInt(parent.style.height, 10)  - elTop;
-                var width = parseInt(parent.style.width, 10) - elLeft;
+                var height = (parent.style.height && parseInt(parent.style.height, 10) || 0) - elTop;
+                var width = (parent.style.width && parseInt(parent.style.width, 10) || 0) - elLeft;
                 //var height = parseInt(el.style.height,10);
                 //var width = parseInt(el.style.width,10);
                 if (isNaN(height)) height = 0;
