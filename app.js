@@ -194,7 +194,7 @@ _lodash2['default'].extend(Widgets['react-griddle'], {
 //var nameStore = new DataStore();
 
 var iterate = function iterate(current, fce) {
-    var children = current.containers;
+    var children = current.containers || [];
 
     //iterate through containers
     var containers = [];
@@ -261,8 +261,8 @@ var App = _react2['default'].createClass({
             if (res.ok && !!res.body) {
 
                 var schema = res.body;
-
-                var dataSources = _lodash2['default'].reduce(schema.props.dataSources, function (memo, value, key) {
+                var schemaProps = schema.props || {};
+                var dataSources = _lodash2['default'].reduce(schemaProps.dataSources, function (memo, value, key) {
                     memo[key] = new _falcor2['default'].Model({ source: new _falcorHttpDatasource2['default'](value, {
                             crossDomain: true,
                             withCredentials: false
@@ -272,11 +272,11 @@ var App = _react2['default'].createClass({
 
                 this.setState({
                     schema: schema,
-                    data: _lodash2['default'].extend({ dataSources: dataSources }, schema.props.defaultData || {}),
-                    format: schema.props.defaultPageSize || 'A4'
+                    data: _lodash2['default'].extend({ dataSources: dataSources }, schemaProps.defaultData || {}),
+                    format: schemaProps.defaultPageSize || 'A4'
                 });
                 this.bindToRepeater(schema, dataSources);
-                this.restartGuide(schema.props.tour);
+                this.restartGuide(schemaProps.tour);
             } else {
                 alert('Oh no! error ' + res.text);
             }

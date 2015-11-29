@@ -46,6 +46,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
 var _utilitiesGraphicUtilJs = require('../utilities/graphicUtil.js');
 
 var _utilitiesGraphicUtilJs2 = _interopRequireDefault(_utilitiesGraphicUtilJs);
@@ -72,13 +76,17 @@ var HtmlPage = _react2['default'].createClass({
 		var pointToPixel = _utilitiesGraphicUtilJs2['default'].pointToPixel;
 
 		var margins = [defaultMargin, defaultMargin, defaultMargin, defaultMargin];
+
 		if (options !== undefined && options.margin !== undefined) {
 			margins = [options.margin.top || defaultMargin, options.margin.right || defaultMargin, options.margin.bottom || defaultMargin, options.margin.left || defaultMargin];
 		}
+		//console.log(JSON.stringify(margins,null,2));
 
 		//convert points to pixel
-		pageSize = [pointToPixel(pageSize[0]), pointToPixel(pageSize[1])];
+		pageSize = [pointToPixel(parseFloat(pageSize[0])), pointToPixel(parseFloat(pageSize[1]))];
 		margins = [pointToPixel(margins[0]), pointToPixel(margins[1]), pointToPixel(margins[2]), pointToPixel(margins[3])];
+
+		//console.log(JSON.stringify(pageSize,null,2));
 
 		//if (this.props.errorFlag) classNames += ' errorFlag';
 		var pageInnerStyle = {
@@ -101,9 +109,34 @@ var HtmlPage = _react2['default'].createClass({
 		//console.log("InnerStyle: " + JSON.stringify(pageInnerStyle,null,2));
 		//console.log("PageStyle: " +  JSON.stringify(pageStyle,null,2));
 
+		var bgStyle = _lodash2['default'].clone(pageStyle);
+		var bg = this.props.background;
+		if (!!bg.color) bgStyle.backgroundColor = bg.color;
+		if (!!bg.image) bgStyle.backgroundImage = 'url(' + bg.image + ')';
+		if (!!bg.position) bgStyle.backgroundPosition = bg.position;
+		if (!!bg.repeat) bgStyle.backgroundRepeat = bg.repeat;
+		if (!!bg.attachment) bgStyle.backgroundAttachment = bg.attachment;
+
+		var filter = bg.filter || {};
+		var cssFilter = "";
+		if (!!filter.blur) cssFilter += ' blur(' + filter.blur + 'px)';
+		if (!!filter.brightness) cssFilter += ' brightness(' + filter.brightness + '%)';
+		if (!!filter.contrast) cssFilter += ' contrast(' + filter.contrast + '%)';
+		if (!!filter.grayscale) cssFilter += ' grayscale(' + filter.grayscale + '%)';
+		if (!!filter.hueRotate) cssFilter += ' hue-rotate(' + filter.hueRotate + 'deg)';
+		if (!!filter.invert) cssFilter += ' invert(' + filter.invert + '%)';
+		if (!!filter.opacity) cssFilter += ' opacity(' + filter.opacity + '%)';
+		if (!!filter.saturate) cssFilter += ' saturate(' + filter.saturate + '%)';
+		if (!!filter.sepia) cssFilter += ' sepia(' + filter.sepia + '%)';
+
+		bgStyle.WebkitFilter = cssFilter;
+		bgStyle.filter = cssFilter;
+		bgStyle.position = 'absolute';
+
 		return _react2['default'].createElement(
 			'div',
 			null,
+			_react2['default'].createElement('div', { style: bgStyle }),
 			_react2['default'].createElement(
 				'div',
 				{ style: pageStyle },
@@ -120,7 +153,7 @@ var HtmlPage = _react2['default'].createClass({
 module.exports = HtmlPage;
 
 
-},{"../utilities/graphicUtil.js":9,"react":undefined}],3:[function(require,module,exports){
+},{"../utilities/graphicUtil.js":9,"lodash":undefined,"react":undefined}],3:[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -162,13 +195,14 @@ var HtmlPagesRenderer = _react2['default'].createClass({
 		var code = ctx['code'] && ctx['code'].code;
 		var customCode = !!code ? new Function(code)() : undefined;
 
+		var pageBackground = this.props.schema.props && this.props.schema.props.background || {};
 		return _react2['default'].createElement(
 			'div',
 			{ id: 'section-to-print', style: this.props.style },
 			pages.map(function (page, i) {
 				return _react2['default'].createElement(
 					_HtmlPageJs2['default'],
-					{ key: 'page' + i, pageNumber: page.pageNumber, widgets: this.props.widgets,
+					{ key: 'page' + i, pageNumber: page.pageNumber, widgets: this.props.widgets, background: pageBackground,
 						errorFlag: this.props.errorFlag, pageOptions: this.props.pageOptions },
 					page.boxes.map(function (node, j) {
 						var elName = node.element.elementName;
@@ -827,7 +861,8 @@ var GraphicPrimitive = (function () {
 		value: function pointToPixel(point) {
 			if (point === undefined) return;
 			var convertedPoint = point / 72 * GraphicPrimitive.DPI;
-			return convertedPoint.toFixed(3);
+			return Math.round(convertedPoint, 3);
+			//return parseFloat(convertedPoint.toFixed(3));
 		}
 	}, {
 		key: 'DPI',
@@ -1044,8 +1079,9 @@ function transformToPages(clonedSchema, pageHeight) {
     var globalTop = 0;
     var trav = function trav(node) {
 
-        var props = node.props;
         if (node === undefined) return 0;
+
+        var props = node.props || {};
 
         //grap height and top properties
         var nodeHeight = node.style === undefined ? 0 : parseInt(node.style.height, 10);
@@ -1053,7 +1089,7 @@ function transformToPages(clonedSchema, pageHeight) {
         var nodeTop = node.style === undefined ? 0 : parseInt(node.style.top, 10);
         if (isNaN(nodeTop)) nodeTop = 0;
 
-        var children = node.containers;
+        var children = node.containers || [];
         var computedHeight = 0;
         if (children === undefined) return computedHeight;
         var childrenHeight = 0;
@@ -1104,13 +1140,13 @@ function transformToPages(clonedSchema, pageHeight) {
                 var elLeft = el.style.left && parseInt(el.style.left, 10) || 0;
 
                 //grab parent positions
-                var top = parseInt(parent.style.top, 10) + elTop;
-                var left = parseInt(parent.style.left, 10) + elLeft;
+                var top = (parent.style.top && parseInt(parent.style.top, 10) || 0) + elTop;
+                var left = (parent.style.left && parseInt(parent.style.left, 10) || 0) + elLeft;
 
                 //grab parent dimensions
                 //TODO: !!!! temporarily - container width simulates boxes width
-                var height = parseInt(parent.style.height, 10) - elTop;
-                var width = parseInt(parent.style.width, 10) - elLeft;
+                var height = (parent.style.height && parseInt(parent.style.height, 10) || 0) - elTop;
+                var width = (parent.style.width && parseInt(parent.style.width, 10) || 0) - elLeft;
                 //var height = parseInt(el.style.height,10);
                 //var width = parseInt(el.style.width,10);
                 if (isNaN(height)) height = 0;
